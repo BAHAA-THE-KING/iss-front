@@ -55,8 +55,13 @@ export default function Parks({ parks }: Props) {
               <Box>{park.description}</Box>
             </Box>
           </Stack>
-          <Stack justifyContent={"space-between"} alignItems={"center"} my={2}>
-            <Box>{park.price}</Box>
+          <Stack
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            my={2}
+            mx={3}
+          >
+            <Box>{park.price}/hr</Box>
             <Button
               variant="contained"
               sx={{
@@ -66,7 +71,7 @@ export default function Parks({ parks }: Props) {
                 me: 1,
               }}
             >
-              Rent Now
+              Rent
             </Button>
           </Stack>
         </Box>
