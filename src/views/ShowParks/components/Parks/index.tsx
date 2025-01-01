@@ -1,13 +1,18 @@
 import { Badge, Box, Button, Stack, Typography } from "@mui/material";
+import { useState } from "react";
+
+import ReservationsPopup from "../ReservationsPopup";
+
+import { Park } from "src/types/Park";
 
 import bg from "src/assets/bg.jpg";
-import { Park } from "src/types/Park";
 
 type Props = {
   parks: Park[];
 };
 
 export default function Parks({ parks }: Props) {
+  const [parkId, setParkId] = useState<number>(0);
   return (
     <Box
       display={"flex"}
@@ -18,8 +23,9 @@ export default function Parks({ parks }: Props) {
         backgroundImage: `URL(${bg})`,
         backgroundSize: "100% 100%",
         backgroundBlendMode: "color",
+        backgroundAttachment: "fixed",
         bgcolor: "#FEFEFEAA",
-        py: 3,
+        py: 2,
       }}
       color={"black"}
       overflow={"auto"}
@@ -70,12 +76,14 @@ export default function Parks({ parks }: Props) {
                 bgcolor: "#003e7e",
                 me: 1,
               }}
+              onClick={() => setParkId(park.id)}
             >
               Rent
             </Button>
           </Stack>
         </Box>
       ))}
+      <ReservationsPopup close={() => setParkId(0)} parkId={parkId} />
     </Box>
   );
 }
