@@ -1,12 +1,12 @@
 import { Route } from "./types/Route";
 
-import { Home, Login } from "./views";
+import { ShowParks, Login } from "./views";
 
 export default [
   {
-    name: "homepage",
-    path: "/",
-    element: <Home />,
+    name: "show-parks",
+    path: "/show-parks",
+    element: <ShowParks />,
   },
   {
     name: "login",

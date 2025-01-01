@@ -1,4 +1,4 @@
-import { Home } from "./Home";
+import { ShowParks } from "./ShowParks";
 import { Login } from "./Login";
 
-export { Home, Login };
+export { ShowParks, Login };
