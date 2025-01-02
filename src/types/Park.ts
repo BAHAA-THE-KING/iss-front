@@ -4,6 +4,9 @@ export type Park = {
   name: string;
   description: string;
   status: "reserved" | "free";
-  rentTime: string[];
+  rentTime: {
+    startDateTime: string;
+    duration: number;
+  }[];
   price: string;
 };
