@@ -8,5 +8,5 @@ export type Park = {
     startDateTime: string;
     duration: number;
   }[];
-  price: string;
+  price: number;
 };

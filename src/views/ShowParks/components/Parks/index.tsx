@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function Parks({ parks }: Props) {
-  const [parkId, setParkId] = useState<number>(0);
+  const [park, setPark] = useState<Park | null>(null);
   return (
     <Box
       display={"flex"}
@@ -67,7 +67,7 @@ export default function Parks({ parks }: Props) {
             my={2}
             mx={3}
           >
-            <Box>{park.price}/hr</Box>
+            <Box>${park.price}/hr</Box>
             <Button
               variant="contained"
               sx={{
@@ -76,14 +76,14 @@ export default function Parks({ parks }: Props) {
                 bgcolor: "#003e7e",
                 me: 1,
               }}
-              onClick={() => setParkId(park.id)}
+              onClick={() => setPark(park)}
             >
               Rent
             </Button>
           </Stack>
         </Box>
       ))}
-      <ReservationsPopup close={() => setParkId(0)} parkId={parkId} />
+      <ReservationsPopup close={() => setPark(null)} park={park} />
     </Box>
   );
 }

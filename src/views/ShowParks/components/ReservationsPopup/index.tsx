@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -21,50 +22,49 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import { ParkForm, PaymentForm } from "..";
 
 import { Park } from "src/types/Park";
+import { Card as CardType } from "src/types/Card";
+import { RentForm } from "src/types/RentForm";
+
+import { api } from "src/utils";
 
 import fakeData from "src/fakeData";
-import { Card as CardType } from "src/types/Card";
 
 type Props = {
   close: () => void;
-  parkId: number;
+  park: Park | null;
 };
 
-export default function ReservationsPopup({ close, parkId }: Props) {
-  const [park, setPark] = useState<Park>();
-  const [cards, setCards] = useState<CardType[]>(fakeData.cards);
-  const [date, setDate] = useState<string>(
-    new Date().toLocaleDateString("sv-Se")
-  );
-  const [time, setTime] = useState<string>(new Date().toLocaleString("sv-Se"));
-  const [duration, setDuration] = useState<number>(0);
-  const [cardId, setCardId] = useState<number>(0);
-  const [pin, setPin] = useState<string>("");
+export default function ReservationsPopup({ close, park }: Props) {
+  const [cards, setCards] = useState<CardType[]>([]);
+
+  const { control, reset, handleSubmit } = useForm<RentForm>({
+    defaultValues: {
+      date: new Date().toLocaleDateString("sv-Se"),
+      time: new Date().toLocaleString("sv-Se"),
+      duration: 0,
+      cardId: cards?.[0]?.id ?? 0,
+      pin: "",
+    },
+  });
 
   useEffect(() => {
     // TODO: get data
-    if (parkId) setPark(fakeData.parks.find((p) => p.id === parkId));
-    setDate(new Date().toLocaleDateString("sv-Se"));
-    setTime(new Date().toLocaleString("sv-Se"));
-    setDuration(0);
+    setCards(fakeData.cards);
     setActiveStep(0);
-  }, [parkId]);
+    reset({
+      date: new Date().toLocaleDateString("sv-Se"),
+      time: new Date().toLocaleString("sv-Se"),
+      duration: 0,
+      cardId: cards?.[0]?.id ?? 0,
+      pin: "",
+    });
+  }, [park]);
 
   const steps = useMemo(
     () => [
       {
         label: "Choose a Time",
-        component: (
-          <ParkForm
-            key={"ParkForm"}
-            date={date}
-            setDate={setDate}
-            time={time}
-            setTime={setTime}
-            duration={duration}
-            setDuration={setDuration}
-          />
-        ),
+        component: <ParkForm key={"ParkForm"} park={park!} control={control} />,
       },
       {
         label: "Enter Payment Info",
@@ -72,27 +72,35 @@ export default function ReservationsPopup({ close, parkId }: Props) {
           <PaymentForm
             key="PaymentForm"
             cards={cards}
-            pin={pin}
-            setPin={setPin}
+            park={park!}
+            control={control}
           />
         ),
       },
     ],
-    [date, time, duration, cards, pin]
+    [park, cards, control]
   );
 
   const [activeStep, setActiveStep] = useState(0);
   const handleBack = () => activeStep > 0 && setActiveStep(activeStep - 1);
   const handleNext = () => {
-    if (activeStep < steps.length - 1) setActiveStep(activeStep + 1);
-    else {
-      setActiveStep(steps.length - 1);
-      // TODO: send data
+    if (activeStep === steps.length - 1) {
+      // last step
+      handleSubmit((data) => {
+        // TODO: send data
+        console.log(data);
+        // api.post();
+      })();
+    } else {
+      // check then proceed
+      handleSubmit(() => {
+        setActiveStep(activeStep + 1);
+      })();
     }
   };
 
   return (
-    <Modal open={Boolean(parkId)} onClose={close}>
+    <Modal open={Boolean(park)} onClose={close}>
       <Stack
         width={"100%"}
         height={"100%"}
@@ -103,7 +111,7 @@ export default function ReservationsPopup({ close, parkId }: Props) {
           sx={{
             width: "50%",
             minWidth: "400px",
-            height: "90%",
+            maxHeight: "90%",
             borderRadius: "10px",
             p: 2,
             overflow: "auto",
@@ -146,9 +154,7 @@ export default function ReservationsPopup({ close, parkId }: Props) {
               </Stepper>
             </Grid2>
             <Grid2 size={{ xs: 12 }}>
-              <Box width={"100%"} height={"480px"}>
-                {steps[activeStep].component}
-              </Box>
+              <Box width={"100%"}>{steps[activeStep].component}</Box>
             </Grid2>
             <Grid2 size={{ xs: 12 }}>
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
