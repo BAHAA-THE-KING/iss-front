@@ -8,7 +8,7 @@ export default function BackgroundImage() {
       position: "absolute",
       top: 0,
       left: 0,
-      width: "auto",
+      width: "40%",
       height: "100%",
       objectFit: "cover",
     }}>

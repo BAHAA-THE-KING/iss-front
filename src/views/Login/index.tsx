@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { BackgroundImage } from "./components";
+import { BackgroundImage , BackgroundContainer , LoginForm} from "./components";
 
 export function Login() {
   return (
@@ -12,6 +12,8 @@ export function Login() {
       }}
     >
       <BackgroundImage />
+      <BackgroundContainer />
+      <LoginForm />
 
     </Box>
   );
