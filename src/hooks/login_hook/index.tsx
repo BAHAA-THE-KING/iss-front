@@ -18,11 +18,10 @@ export const useLoginForm = () => {
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); // Set error messages
-      return false; // Return false if there are validation errors
+      setErrors(newErrors); 
+      return false; 
     }
-
-    return true; // Return true if no errors
+    return true; 
   };
 
   return {

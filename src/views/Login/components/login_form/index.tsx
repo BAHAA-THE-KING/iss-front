@@ -1,8 +1,8 @@
-import { Box, TextField, IconButton, InputAdornment, Button , Typography  } from "@mui/material";
-import { useLoginForm } from "src/hooks"; // Import the custom hook
+import { Box, TextField, IconButton, InputAdornment , Typography  } from "@mui/material";
+import { useLoginForm } from "src/hooks"; 
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router"; 
-
+import { motion } from "framer-motion";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -21,33 +21,49 @@ export default function LoginForm() {
 
   const handleSubmit = () => {
     if (handleLogin()) {
-      navigate("/show-parks"); // Navigate on successful login
+      navigate("/show-parks"); 
     }
   };
 
 
   return (
+    <motion.div
+      initial={{ opacity: 0, y: -100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: "easeInOut", delay: 0.2 }}
+      style={{ position: 'absolute',
+        width: "35%",
+        height: "80%",
+        top: '20%', right: '15%', transform: 'translateY(-10%)' }}
+    >
        <Box
       sx={{
-        position: "absolute", // Absolute positioning to move it freely
-        top: "50%", // Center vertically
-        right: "12%", // Margin from the right side of the screen
-        transform: "translateY(-50%)", // Ensure it's exactly centered vertically
-        width: "35%",
-        height: "50%",
         backgroundColor: "#fff",
         borderRadius: "15px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.4)",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
         padding: "20px",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "start",
+        justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <h2 color="#325677">Welcome Again</h2>
+      <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 1 }}
+        >
+          Welcome Back
+        </motion.h2>
 
-      <TextField
+     
+      <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 1 }}
+          style={{ width: '100%', marginBottom: '20px' }}
+        >
+     <TextField
         label="Username"
         variant="outlined"
         value={username}
@@ -56,13 +72,13 @@ export default function LoginForm() {
         sx={{
           marginBottom: "15px",
           "& .MuiOutlinedInput-root.Mui-focused": {
-            borderColor: "#eab552", // Change focus color
+            borderColor: "#eab552",
           },
         }}
         error={!!errors.username}
         helperText={errors.username}
       />
-      <TextField
+     <TextField
         label="Password"
         variant="outlined"
         type={showPassword ? "text" : "password"}
@@ -72,7 +88,7 @@ export default function LoginForm() {
         sx={{
           marginBottom: "15px",
           "& .MuiOutlinedInput-root.Mui-focused": {
-            borderColor: "#eab552", // Change focus color
+            borderColor: "#eab552",
           },
         }}
         error={!!errors.password}
@@ -87,6 +103,13 @@ export default function LoginForm() {
           ),
         }}
       />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 1 }}
+        >       
+        
        <Typography variant="body2" sx={{ 
         marginBottom: "6%" ,
        textAlign: "left", width: "100%" ,
@@ -99,20 +122,39 @@ export default function LoginForm() {
           register
         </span>
       </Typography>
-      <Button
-        variant="contained"
-        onClick={handleLogin}
-        sx={{
-          width: "100%",
-          backgroundColor: "#eab552", 
-          "&:hover": {
+         </motion.div>
+
+      <motion.button
+          onClick={handleLogin}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{
+            scale: 1.1,
             backgroundColor: "#d89f3d",
-          },
-        }}
-      >
-        Login
-      </Button>
+            color: "black",
+          }}
+          transition={{
+            bounceDamping: 10,
+            bounceStiffness: 600,
+          }}
+          style={{
+            width: "70%",
+            padding: "7px 0",
+            backgroundColor: "#eab552", // Same color as before
+            color: "#fff",
+            borderRadius: "8px", // Radius like before
+            fontSize: "16px", // Font size like before
+            fontWeight: "lighter", // Same font weight as before
+            cursor: "pointer",
+            textAlign: "center",
+            border: "none",    
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Add shadow
+
+                 }}
+        >
+          Login
+        </motion.button>
     </Box>
+    </motion.div>
 
   );
 }
