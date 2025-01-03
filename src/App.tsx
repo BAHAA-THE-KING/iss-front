@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+
 import routes from "./routes";
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
           {routes.map((e) => (
             <Route key={e.name} path={e.path} element={e.element} />
           ))}
-          <Route path="*" element={<Navigate to={"/show-parks"} />} />
+          <Route path="*" element={<Navigate to={"/login"} />} />
+          
         </Routes>
       </BrowserRouter>
     </LocalizationProvider>
