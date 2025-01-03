@@ -47,6 +47,7 @@ export default function RegisterForm({ handleSwitch }: { handleSwitch: () => voi
         borderRadius: "15px",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
         padding: "20px",
+        border: `2px solid #eab552`,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",

@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import backgroundImage from "src/assets/background.png";
 
 
 export default function BackgroundContainer() {
@@ -9,13 +10,23 @@ export default function BackgroundContainer() {
       right: 0,
       height: "100%",
       width: "65%",
-      backgroundColor: `#325677`,
-      border: `3px solid #eab552`,
+      backgroundColor: `#ececec`,
       borderTopLeftRadius: "30px", 
       borderBottomLeftRadius: "30px",
       boxSizing: "border-box",
-      // boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
-    }}/>
+      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
+    }}>
+      <img
+    src={backgroundImage}
+    style={{
+      height: "100%",
+      objectFit:"cover",
+      borderTopLeftRadius: "30px", 
+      borderBottomLeftRadius: "30px",
+      opacity: "0.5",
+    }}
+  />
+      </Box>
 
   );
 }

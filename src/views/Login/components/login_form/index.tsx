@@ -32,7 +32,7 @@ export default function LoginForm({ handleSwitch }: { handleSwitch: () => void }
       transition={{ duration: 1, ease: "easeInOut", }}
       style={{ position: 'absolute',
         width: "35%",
-        height: "80%",
+        height: "90%",
         top: '20%', right: '15%', transform: 'translateY(-10%)' }}
     >
        <Box
@@ -41,6 +41,8 @@ export default function LoginForm({ handleSwitch }: { handleSwitch: () => void }
         borderRadius: "15px",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
         padding: "20px",
+        height: "60%",
+        border: `2px solid #eab552`,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
