@@ -4,10 +4,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router"; 
 import { motion } from "framer-motion";
 
-export default function LoginForm() {
+export default function LoginForm({ handleSwitch }: { handleSwitch: () => void }) {
   const navigate = useNavigate();
 
- 
   const {
     username,
     password,
@@ -30,7 +29,7 @@ export default function LoginForm() {
     <motion.div
       initial={{ opacity: 0, y: -100 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: "easeInOut", delay: 0.2 }}
+      transition={{ duration: 1, ease: "easeInOut", }}
       style={{ position: 'absolute',
         width: "35%",
         height: "80%",
@@ -104,20 +103,25 @@ export default function LoginForm() {
         }}
       />
         </motion.div>
+     
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 1 }}
+          style={
+            {
+              width: "100%",
+            }
+          }
         >       
-        
        <Typography variant="body2" sx={{ 
         marginBottom: "6%" ,
        textAlign: "left", width: "100%" ,
-}}>
+      }}>
         If you don't have an account,{" "}
         <span
-          onClick={handleSubmit}
-          style={{ color: "#325677", cursor: "pointer", fontWeight: "bold" }}
+            onClick={handleSwitch}
+            style={{ color: "#325677", cursor: "pointer", fontWeight: "bold" }}
         >
           register
         </span>
@@ -125,7 +129,7 @@ export default function LoginForm() {
          </motion.div>
 
       <motion.button
-          onClick={handleLogin}
+          onClick={handleSubmit}
           whileTap={{ scale: 0.9 }}
           whileHover={{
             scale: 1.1,

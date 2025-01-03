@@ -1,7 +1,7 @@
 import BackgroundImage from "./background_image";
 import BackgroundContainer from "./background_container";
-import LoginForm from "./login_form";
+import AuthSwitcher from "./auth_switcher";
 
 
 
-export {BackgroundImage , BackgroundContainer , LoginForm};
+export {BackgroundImage , BackgroundContainer , AuthSwitcher};
