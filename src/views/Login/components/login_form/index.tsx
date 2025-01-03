@@ -1,5 +1,5 @@
 import { Box, TextField, IconButton, InputAdornment, Button , Typography  } from "@mui/material";
-import { useState } from "react";
+import { useLoginForm } from "src/hooks"; // Import the custom hook
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router"; 
 
@@ -7,34 +7,22 @@ import { useNavigate } from "react-router";
 export default function LoginForm() {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+ 
+  const {
+    username,
+    password,
+    showPassword,
+    errors,
+    setUsername,
+    setPassword,
+    setShowPassword,
+    handleLogin,
+  } = useLoginForm();
 
-  const handleLogin = () => {
-    // Validate input
-    const newErrors: { username?: string; password?: string } = {};
-
-    if (username.length < 4) {
-      newErrors.username = "Username must be at least 4 characters long.";
+  const handleSubmit = () => {
+    if (handleLogin()) {
+      navigate("/show-parks"); // Navigate on successful login
     }
-
-    if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long.";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); // Set error messages
-      return;
-    }
-
-    // If no errors, navigate to the next screen after successful login
-    navigate("/show-parks"); // Use your desired route
-  };
-
-  const handleRegisterClick = () => {
-    console.log("hello"); // This will print "hello" for now; modify it later
   };
 
 
@@ -105,7 +93,7 @@ export default function LoginForm() {
 }}>
         If you don't have an account,{" "}
         <span
-          onClick={handleRegisterClick}
+          onClick={handleSubmit}
           style={{ color: "#325677", cursor: "pointer", fontWeight: "bold" }}
         >
           register
