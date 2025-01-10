@@ -20,8 +20,8 @@ export default function RegisterForm({ handleSwitch }: { handleSwitch: () => voi
       handleRegister,
     } = useLoginForm();
   
-    const handleSubmit = () => {
-      if (handleRegister()) {
+    const handleSubmit = async () => {
+      if (await handleRegister()) {
         navigate("/show-parks"); 
       }
     };

@@ -18,8 +18,8 @@ export default function LoginForm({ handleSwitch }: { handleSwitch: () => void }
     handleLogin,
   } = useLoginForm();
 
-  const handleSubmit = () => {
-    if (handleLogin()) {
+  const handleSubmit = async () => {
+    if (await handleLogin()) {
       navigate("/show-parks"); 
     }
   };
