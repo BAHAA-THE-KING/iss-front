@@ -26,6 +26,7 @@ export default function Parks({ parks }: Props) {
         backgroundAttachment: "fixed",
         bgcolor: "#FEFEFEAA",
         py: 2,
+        minHeight: "CALC(100vh - 125px)",
       }}
       color={"black"}
       overflow={"auto"}

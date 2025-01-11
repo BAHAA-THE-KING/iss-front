@@ -1,2 +1,1 @@
-import { api } from "./apiUtil";
-export { api };
+export { api } from "./apiUtil";

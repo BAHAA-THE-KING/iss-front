@@ -1,19 +1,18 @@
-import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 
 import { Navbar, Parks } from "./components";
 
-import { Park } from "src/types/Park";
-
-import fakeData from "src/fakeData";
+import { useParks } from "./data";
 
 export function ShowParks() {
-  const [parks, setParks] = useState<Park[]>(fakeData.parks);
-  useEffect(() => {
-    // TODO: get data
-  }, []);
+  const { parks } = useParks();
   return (
-    <Box width={"100%"} display={"flex"} flexDirection={"column"}>
+    <Box
+      width={"100%"}
+      minHeight={"100vh"}
+      display={"flex"}
+      flexDirection={"column"}
+    >
       <Navbar />
       <Parks parks={parks} />
     </Box>

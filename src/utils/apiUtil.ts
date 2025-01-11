@@ -11,6 +11,7 @@ const api = new Axios({
 api.interceptors.request.use((req) => {
   const data = req.data;
   req.data = JSON.stringify(data);
+  req.headers.Authorization = "Bearer " + localStorage.getItem("token");
   //  const clientPrivateKey = localStorage.getItem("clientPrivateKey");
   //  const decryptor = new JSEncrypt();
   //  decryptor.setPrivateKey(clientPrivateKey!);
