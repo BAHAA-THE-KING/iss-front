@@ -16,6 +16,7 @@ export const useLoginForm = () => {
     repeatedPass?: string;
     phone?: string;
     carPlateNumber?: string;
+    backendError?: string;
   }>({});
 
   const { setToken } = useToken();
@@ -43,10 +44,14 @@ export const useLoginForm = () => {
 
       const data = JSON.parse(response.data);
 
+      if (response.status !== 200) {
+        throw new Error(data.error ?? data.message ?? data.errors);
+      }
+
       setToken(data.token);
       return true;
-    } catch (err) {
-      //TODO: show the error to the user
+    } catch (err: any) {
+      setErrors({ backendError: err.message });
       return false;
     }
   };
@@ -72,6 +77,16 @@ export const useLoginForm = () => {
       newErrors.repeatedPass = "Passwords do not match";
     }
 
+    if (isNaN(Number(phone))) {
+      newErrors.phone = "Phone must contains only numbers.";
+    } else if (phone.length !== 10) {
+      newErrors.phone = "Phone must be 10 digits long.";
+    }
+
+    if (carPlateNumber.length === 0) {
+      newErrors.carPlateNumber = "Car Plate Number must not be empty.";
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return false;
@@ -86,11 +101,15 @@ export const useLoginForm = () => {
 
       const data = JSON.parse(response.data);
 
+      if (response.status !== 200) {
+        throw new Error(data.error ?? data.message ?? data.errors);
+      }
+
       setToken(data.token);
 
       return true;
-    } catch (err) {
-      //TODO: show the error to the user
+    } catch (err: any) {
+      setErrors({ backendError: err.message });
       return false;
     }
   };
@@ -99,12 +118,16 @@ export const useLoginForm = () => {
     username,
     password,
     showPassword,
+    phone,
+    carPlateNumber,
     repeatPassword,
     errors,
     setUsername,
     setPassword,
     setShowPassword,
     setRepeatPassword,
+    setPhone,
+    setCarPlateNumber,
     handleLogin,
     handleRegister,
   };

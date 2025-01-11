@@ -126,6 +126,11 @@ export default function LoginForm({
             width: "100%",
           }}
         >
+          {errors.backendError ? (
+            <Typography color="red" textAlign={"center"}>
+              {errors.backendError}
+            </Typography>
+          ) : null}
           <Typography
             variant="body2"
             sx={{

@@ -21,12 +21,16 @@ export default function RegisterForm({
     username,
     password,
     repeatPassword,
+    phone,
+    carPlateNumber,
     showPassword,
     errors,
     setUsername,
     setPassword,
     setShowPassword,
     setRepeatPassword,
+    setPhone,
+    setCarPlateNumber,
     handleRegister,
   } = useLoginForm();
 
@@ -94,6 +98,36 @@ export default function RegisterForm({
             helperText={errors.username}
           />
           <TextField
+            label="Phone"
+            variant="outlined"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            sx={{
+              marginBottom: "15px",
+              "& .MuiOutlinedInput-root.Mui-focused": {
+                borderColor: "#eab552",
+              },
+            }}
+            error={!!errors.phone}
+            helperText={errors.phone}
+          />
+          <TextField
+            label="Car Plate Number"
+            variant="outlined"
+            value={carPlateNumber}
+            onChange={(e) => setCarPlateNumber(e.target.value)}
+            fullWidth
+            sx={{
+              marginBottom: "15px",
+              "& .MuiOutlinedInput-root.Mui-focused": {
+                borderColor: "#eab552",
+              },
+            }}
+            error={!!errors.carPlateNumber}
+            helperText={errors.carPlateNumber}
+          />
+          <TextField
             label="Password"
             variant="outlined"
             type={showPassword ? "text" : "password"}
@@ -144,6 +178,11 @@ export default function RegisterForm({
             width: "100%",
           }}
         >
+          {errors.backendError ? (
+            <Typography color="red" textAlign={"center"}>
+              {errors.backendError}
+            </Typography>
+          ) : null}
           <Typography
             variant="body2"
             sx={{ marginBottom: "6%", textAlign: "left", width: "100%" }}
