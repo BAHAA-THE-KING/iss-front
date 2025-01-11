@@ -1,5 +1,9 @@
 import { Box } from "@mui/material";
-import { BackgroundImage , BackgroundContainer , AuthSwitcher} from "./components";
+import {
+  BackgroundImage,
+  BackgroundContainer,
+  AuthSwitcher,
+} from "./components";
 
 export function Login() {
   return (
@@ -14,7 +18,6 @@ export function Login() {
       <BackgroundImage />
       <BackgroundContainer />
       <AuthSwitcher />
-
     </Box>
   );
 }

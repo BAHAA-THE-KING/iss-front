@@ -14,8 +14,8 @@ export const useLoginForm = () => {
     username?: string;
     password?: string;
     repeatedPass?: string;
-      phone?: string;
-      carPlateNumber?: string;
+    phone?: string;
+    carPlateNumber?: string;
   }>({});
 
   const { setToken } = useToken();
@@ -32,8 +32,8 @@ export const useLoginForm = () => {
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); 
-      return false; 
+      setErrors(newErrors);
+      return false;
     }
     try {
       const response = await api.post("/auth/login", {
@@ -44,7 +44,7 @@ export const useLoginForm = () => {
       const data = JSON.parse(response.data);
 
       setToken(data.token);
-    return true; 
+      return true;
     } catch (err) {
       //TODO: show the error to the user
       return false;
@@ -73,8 +73,8 @@ export const useLoginForm = () => {
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); 
-      return false; 
+      setErrors(newErrors);
+      return false;
     }
     try {
       const response = await api.post("/auth/register", {
@@ -88,14 +88,12 @@ export const useLoginForm = () => {
 
       setToken(data.token);
 
-    return true; 
+      return true;
     } catch (err) {
       //TODO: show the error to the user
       return false;
     }
   };
-
-
 
   return {
     username,
@@ -108,6 +106,6 @@ export const useLoginForm = () => {
     setShowPassword,
     setRepeatPassword,
     handleLogin,
-    handleRegister
+    handleRegister,
   };
 };
