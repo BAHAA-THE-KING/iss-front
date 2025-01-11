@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { api } from "src/utils";
-import { useToken } from "..";
+import { useHandleError, useToken } from "..";
 
 export const useLoginForm = () => {
   const [username, setUsername] = useState<string>("");
@@ -20,6 +20,7 @@ export const useLoginForm = () => {
   }>({});
 
   const { setToken } = useToken();
+  const { handleError } = useHandleError();
 
   const handleLogin = async () => {
     const newErrors: { username?: string; password?: string } = {};
@@ -42,11 +43,9 @@ export const useLoginForm = () => {
         password,
       });
 
-      const data = JSON.parse(response.data);
+      handleError(response);
 
-      if (response.status !== 200) {
-        throw new Error(data.error ?? data.message ?? data.errors);
-      }
+      const data = JSON.parse(response.data);
 
       setToken(data.token);
       return true;
@@ -99,11 +98,9 @@ export const useLoginForm = () => {
         carPlateNumber,
       });
 
-      const data = JSON.parse(response.data);
+      handleError(response);
 
-      if (response.status !== 200) {
-        throw new Error(data.error ?? data.message ?? data.errors);
-      }
+      const data = JSON.parse(response.data);
 
       setToken(data.token);
 

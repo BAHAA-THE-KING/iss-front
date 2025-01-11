@@ -6,12 +6,10 @@ import ReservationsPopup from "../ReservationsPopup";
 import { Park } from "src/types/Park";
 
 import bg from "src/assets/bg.jpg";
+import { useParks } from "../../data";
 
-type Props = {
-  parks: Park[];
-};
-
-export default function Parks({ parks }: Props) {
+export default function Parks() {
+  const { parks, error } = useParks();
   const [park, setPark] = useState<Park | null>(null);
   return (
     <Box
@@ -84,7 +82,23 @@ export default function Parks({ parks }: Props) {
           </Stack>
         </Box>
       ))}
-      <ReservationsPopup close={() => setPark(null)} park={park} />
+      {error ? (
+        <Box
+          width={"15%"}
+          bgcolor={"white"}
+          borderRadius={"10px"}
+          my={1}
+          p={1}
+          py={3}
+        >
+          <Typography color="red" textAlign={"center"}>
+            {error}
+          </Typography>
+        </Box>
+      ) : null}
+      {park ? (
+        <ReservationsPopup close={() => setPark(null)} park={park} />
+      ) : null}
     </Box>
   );
 }

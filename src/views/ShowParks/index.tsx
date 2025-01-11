@@ -2,10 +2,7 @@ import { Box } from "@mui/material";
 
 import { Navbar, Parks } from "./components";
 
-import { useParks } from "./data";
-
 export function ShowParks() {
-  const { parks } = useParks();
   return (
     <Box
       width={"100%"}
@@ -14,7 +11,7 @@ export function ShowParks() {
       flexDirection={"column"}
     >
       <Navbar />
-      <Parks parks={parks} />
+      <Parks />
     </Box>
   );
 }

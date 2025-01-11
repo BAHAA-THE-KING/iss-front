@@ -1,30 +1,29 @@
 import { useEffect, useState } from "react";
 import { useHandleError } from "src/hooks";
-import { Park } from "src/types/Park";
+import { Card } from "src/types/Card";
 import { api } from "src/utils";
 
-export function useParks() {
-  const [parks, setParks] = useState<Park[]>([]);
+export function useCards() {
+  const [cards, setCards] = useState<Card[]>([]);
   const [error, setError] = useState<string | undefined>();
   const [fakeState, setFakeState] = useState(false);
   const { handleError } = useHandleError();
   useEffect(() => {
     api
-      .get("/park/all")
+      .get("/accounts")
       .then((res) => {
         const data = JSON.parse(res.data);
         handleError(res);
-        setParks(data.parks);
+        setCards(data.accounts);
         setError(undefined);
       })
       .catch((err) => {
-        setParks([]);
+        setCards([]);
         setError(err.message);
       });
   }, [fakeState]);
   function refetch() {
     setFakeState(!fakeState);
   }
-
-  return { parks, error, refetch };
+  return { cards, error, refetch };
 }

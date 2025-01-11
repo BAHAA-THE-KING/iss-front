@@ -22,12 +22,10 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import { ParkForm, PaymentForm } from "..";
 
 import { Park } from "src/types/Park";
-import { Card as CardType } from "src/types/Card";
 import { RentForm } from "src/types/RentForm";
 
-import { api } from "src/utils";
-
-import fakeData from "src/fakeData";
+import { useCards, useMakeReservation } from "../../data";
+import { useHandleError } from "src/hooks";
 
 type Props = {
   close: () => void;
@@ -35,27 +33,33 @@ type Props = {
 };
 
 export default function ReservationsPopup({ close, park }: Props) {
-  const [cards, setCards] = useState<CardType[]>([]);
-
+  const { cards, error: apiError } = useCards();
+  const [error, setError] = useState<string | undefined>();
   const { control, reset, handleSubmit } = useForm<RentForm>({
     defaultValues: {
       date: new Date().toLocaleDateString("sv-Se"),
       time: new Date().toLocaleString("sv-Se"),
       duration: 0,
-      cardId: cards?.[0]?.id ?? 0,
+      cardId: cards?.[0]?.id ?? 1,
       pin: "",
     },
   });
 
   useEffect(() => {
-    // TODO: get data
-    setCards(fakeData.cards);
+    setError(undefined);
+  }, []);
+
+  useEffect(() => {
+    setError(apiError);
+  }, [apiError]);
+
+  useEffect(() => {
     setActiveStep(0);
     reset({
       date: new Date().toLocaleDateString("sv-Se"),
       time: new Date().toLocaleString("sv-Se"),
       duration: 0,
-      cardId: cards?.[0]?.id ?? 0,
+      cardId: cards?.[0]?.id ?? 1,
       pin: "",
     });
   }, [park]);
@@ -81,15 +85,27 @@ export default function ReservationsPopup({ close, park }: Props) {
     [park, cards, control]
   );
 
+  const { makeReservation } = useMakeReservation();
+  const { handleError } = useHandleError();
+
   const [activeStep, setActiveStep] = useState(0);
   const handleBack = () => activeStep > 0 && setActiveStep(activeStep - 1);
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
       // last step
-      handleSubmit((data) => {
-        // TODO: send data
-        console.log(data);
-        // api.post();
+      handleSubmit(async (data) => {
+        try {
+          const response = await makeReservation({
+            ...data,
+            parkId: park!.id,
+            time: data.time.split(" ")[1],
+          });
+          handleError(response);
+          setError(undefined);
+          close();
+        } catch (err: any) {
+          setError(err.message);
+        }
       })();
     } else {
       // check then proceed
@@ -152,6 +168,13 @@ export default function ReservationsPopup({ close, park }: Props) {
                   </Step>
                 ))}
               </Stepper>
+            </Grid2>
+            <Grid2 size={{ xs: 12 }}>
+              {error ? (
+                <Typography color="red" textAlign={"center"}>
+                  {error}
+                </Typography>
+              ) : null}
             </Grid2>
             <Grid2 size={{ xs: 12 }}>
               <Box width={"100%"}>{steps[activeStep].component}</Box>
