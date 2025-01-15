@@ -12,7 +12,7 @@ export function useParks() {
     api
       .get("/park/all")
       .then((res) => {
-        const data = JSON.parse(res.data);
+        const data = res.data;
         handleError(res);
         setParks(data.parks);
         setError(undefined);

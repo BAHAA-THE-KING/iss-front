@@ -45,7 +45,7 @@ export const useLoginForm = () => {
 
       handleError(response);
 
-      const data = JSON.parse(response.data);
+      const data = response.data;
 
       setToken(data.token);
       return true;
@@ -100,7 +100,7 @@ export const useLoginForm = () => {
 
       handleError(response);
 
-      const data = JSON.parse(response.data);
+      const data = response.data;
 
       setToken(data.token);
 

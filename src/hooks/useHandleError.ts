@@ -7,7 +7,7 @@ export function useHandleError() {
   const { setToken } = useToken();
 
   function handleError(response: AxiosResponse) {
-    const data = JSON.parse(response.data);
+    const data = response.data;
     if (response.status !== 200) {
       const errMessage =
         data.error ?? data.message ?? data.errors ?? "Internal Server Error";

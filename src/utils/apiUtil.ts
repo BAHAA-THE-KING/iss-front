@@ -1,39 +1,80 @@
 import { Axios } from "axios";
 import { JSEncrypt } from "jsencrypt";
 
-const api = new Axios({
+const config = {
   baseURL: "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },
-});
+};
+
+const api = new Axios(config);
+let clientPrivateKey;
 
 api.interceptors.request.use((req) => {
+  const token = localStorage.getItem("token");
+  if (token) req.headers.Authorization = "Bearer " + token;
+
   const data = req.data;
-  req.data = JSON.stringify(data);
-  req.headers.Authorization = "Bearer " + localStorage.getItem("token");
-  //  const clientPrivateKey = localStorage.getItem("clientPrivateKey");
-  //  const decryptor = new JSEncrypt();
-  //  decryptor.setPrivateKey(clientPrivateKey!);
-  //  const newData = decryptor.decrypt(data);
-  //  if (newData === false) {
-  //    throw new Error("Cannot decrypt data.");
-  //  }
-  //  req.data = newData;
+  const serverPublicKey = localStorage.getItem("serverPublicKey");
+  if (req.url?.startsWith("/auth")) {
+    const jsEncrypt = new JSEncrypt({ default_key_size: "2048" }).getKey();
+    clientPrivateKey = jsEncrypt.getPrivateKey();
+    localStorage.setItem("clientPrivateKey", clientPrivateKey);
+    data.publicKey = jsEncrypt.getPublicKey();
+  }
+
+  const newData = JSON.stringify(data);
+  const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
+  jsEncrypt.setPublicKey(serverPublicKey!);
+
+  const encryptedData = [];
+  for (let i = 0; i <= Math.floor(newData.length / 100); i++) {
+    const str = newData.slice(i * 100, (i + 1) * 100);
+
+    const encStr = jsEncrypt.encrypt(str);
+    if (encStr === false) {
+      throw new Error("error while encryption data.");
+    }
+    encryptedData.push(encStr);
+  }
+
+  req.data = JSON.stringify({ encryptedData });
+
   return req;
 });
-//
-//api.interceptors.response.use((req) => {
-//  const data = req.data;
-//  const serverPublicKey = localStorage.getItem("serverPublicKey");
-//  const encryptor = new JSEncrypt();
-//  encryptor.setPublicKey(serverPublicKey!);
-//  const newData = encryptor.encrypt(data);
-//  if (newData === false) {
-//    throw new Error("Cannot encrypt data.");
-//  }
-//  req.data = newData;
-//  return req;
-//});
 
-export { api };
+api.interceptors.response.use((res) => {
+  const data = JSON.parse(res.data);
+
+  const { encryptedData } = data;
+  if (encryptedData) {
+    const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
+    jsEncrypt.setPrivateKey(clientPrivateKey!);
+
+    const decryptedData = [];
+
+    for (const chunk of encryptedData) {
+      const decStr = jsEncrypt.decrypt(chunk);
+      if (decStr === false) {
+        throw new Error("error while encryption data.");
+      }
+      decryptedData.push(decStr);
+    }
+
+    const data = JSON.parse(decryptedData.join(""));
+    res.data = data;
+
+    return res;
+  } else {
+    throw new Error(data.error ?? data.message ?? data.errors ?? "no data");
+  }
+});
+
+const apiNotSecured = new Axios(config);
+apiNotSecured.interceptors.response.use((res) => {
+  res.data = JSON.parse(res.data);
+  return res;
+});
+
+export { api, apiNotSecured };
