@@ -8,7 +8,7 @@ export function useHandleError() {
 
   function handleError(response: AxiosResponse) {
     const data = response.data;
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 201) {
       const errMessage =
         data.error ?? data.message ?? data.errors ?? "Internal Server Error";
       if (errMessage === "Invalid or expired token") {

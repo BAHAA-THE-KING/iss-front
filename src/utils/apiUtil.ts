@@ -9,13 +9,13 @@ const config = {
 };
 
 const api = new Axios(config);
-let clientPrivateKey;
 
 api.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
   if (token) req.headers.Authorization = "Bearer " + token;
 
   const data = req.data;
+  let clientPrivateKey = localStorage.getItem("clientPrivateKey");
   const serverPublicKey = localStorage.getItem("serverPublicKey");
   if (req.url?.startsWith("/auth")) {
     const jsEncrypt = new JSEncrypt({ default_key_size: "2048" }).getKey();
@@ -24,23 +24,24 @@ api.interceptors.request.use((req) => {
     data.publicKey = jsEncrypt.getPublicKey();
   }
 
-  const newData = JSON.stringify(data);
-  const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
-  jsEncrypt.setPublicKey(serverPublicKey!);
+  if (data) {
+    const newData = JSON.stringify(data);
+    const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
+    jsEncrypt.setPublicKey(serverPublicKey!);
 
-  const encryptedData = [];
-  for (let i = 0; i <= Math.floor(newData.length / 100); i++) {
-    const str = newData.slice(i * 100, (i + 1) * 100);
+    const encryptedData = [];
+    for (let i = 0; i <= Math.floor(newData.length / 100); i++) {
+      const str = newData.slice(i * 100, (i + 1) * 100);
 
-    const encStr = jsEncrypt.encrypt(str);
-    if (encStr === false) {
-      throw new Error("error while encryption data.");
+      const encStr = jsEncrypt.encrypt(str);
+      if (encStr === false) {
+        throw new Error("error while encryption data.");
+      }
+      encryptedData.push(encStr);
     }
-    encryptedData.push(encStr);
+
+    req.data = JSON.stringify({ encryptedData });
   }
-
-  req.data = JSON.stringify({ encryptedData });
-
   return req;
 });
 
@@ -49,6 +50,7 @@ api.interceptors.response.use((res) => {
 
   const { encryptedData } = data;
   if (encryptedData) {
+    const clientPrivateKey = localStorage.getItem("clientPrivateKey");
     const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
     jsEncrypt.setPrivateKey(clientPrivateKey!);
 
