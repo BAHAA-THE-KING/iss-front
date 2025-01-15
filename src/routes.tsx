@@ -1,6 +1,6 @@
 import { Route } from "./types/Route";
 
-import { ShowParks, Login } from "./views";
+import { ShowParks, Login ,AdminParks} from "./views";
 
 export default [
   {
@@ -12,5 +12,10 @@ export default [
     name: "login",
     path: "/login",
     element: <Login />,
+  },
+  {
+    name: "Parks",
+    path: "/admin-parks",
+    element: <AdminParks />,
   },
 ] as Route[];
