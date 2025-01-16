@@ -16,11 +16,11 @@ import {
   styled,
   Typography,
 } from "@mui/material";
+import { motion } from "framer-motion";
 
 import { Close as CloseIcon } from "@mui/icons-material";
 
 import { ParkForm, PaymentForm } from "..";
-
 import { Park } from "src/types/Park";
 import { RentForm } from "src/types/RentForm";
 
@@ -117,84 +117,119 @@ export default function ReservationsPopup({ close, park }: Props) {
 
   return (
     <Modal open={Boolean(park)} onClose={close}>
-      <Stack
-        width={"100%"}
-        height={"100%"}
-        justifyContent={"center"}
-        alignItems={"center"}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.5 }}
       >
-        <Card
-          sx={{
-            width: "50%",
-            minWidth: "400px",
-            maxHeight: "90%",
-            borderRadius: "10px",
-            p: 2,
-            overflow: "auto",
-          }}
+        <Stack
+          width={"100%"}
+          height={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
-          <Grid2 container>
-            <Grid2
-              size={{ xs: 12 }}
-              display={"flex"}
-              justifyContent={"flex-end"}
-            >
-              <IconButton onClick={close}>
-                <CloseIcon fontSize="large" />
-              </IconButton>
-            </Grid2>
-            <Grid2 size={{ xs: 12 }}>
-              <Stepper
-                activeStep={activeStep}
-                sx={{
-                  my: 3,
-                }}
-                connector={<QontoConnector />}
+          <Card
+            sx={{
+              width: "50%",
+              minWidth: "400px",
+              maxHeight: "90%",
+              borderRadius: "10px",
+              p: 2,
+              overflow: "auto",
+            }}
+          >
+            <Grid2 container>
+              <Grid2
+                size={{ xs: 12 }}
+                display={"flex"}
+                justifyContent={"flex-end"}
               >
-                {steps.map(({ label }, index) => (
-                  <Step key={label}>
-                    <StepLabel>
-                      <Typography
-                        sx={(theme) => ({
-                          color:
-                            index < activeStep
-                              ? theme.palette.primary.main
-                              : "",
-                        })}
-                      >
-                        {label}
-                      </Typography>
-                    </StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-            </Grid2>
-            <Grid2 size={{ xs: 12 }}>
-              {error ? (
-                <Typography color="red" textAlign={"center"}>
-                  {error}
-                </Typography>
-              ) : null}
-            </Grid2>
-            <Grid2 size={{ xs: 12 }}>
-              <Box width={"100%"}>{steps[activeStep].component}</Box>
-            </Grid2>
-            <Grid2 size={{ xs: 12 }}>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                {activeStep !== 0 ? (
-                  <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
-                    Back
-                  </Button>
+                <IconButton onClick={close}>
+                  <CloseIcon fontSize="large" />
+                </IconButton>
+              </Grid2>
+              <Grid2 size={{ xs: 12 }}>
+                <Stepper
+                  activeStep={activeStep}
+                  sx={{
+                    my: 3,
+                  }}
+                  connector={<QontoConnector />}
+                >
+                  {steps.map(({ label }, index) => (
+                    <Step key={label}>
+                      <StepLabel>
+                        <Typography
+                          sx={(theme) => ({
+                            color:
+                              index < activeStep
+                                ? theme.palette.primary.main
+                                : "",
+                          })}
+                        >
+                          {label}
+                        </Typography>
+                      </StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Grid2>
+              <Grid2 size={{ xs: 12 }}>
+                {error ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Typography color="red" textAlign={"center"}>
+                      {error}
+                    </Typography>
+                  </motion.div>
                 ) : null}
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? "Rent" : "Next"}
-                </Button>
-              </Box>
+              </Grid2>
+              <Grid2 size={{ xs: 12 }}>
+                <motion.div
+                  key={activeStep}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Box width={"100%"}>{steps[activeStep].component}</Box>
+                </motion.div>
+              </Grid2>
+              <Grid2 size={{ xs: 12 }}>
+                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                  {activeStep !== 0 ? (
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        color="inherit"
+                        onClick={handleBack}
+                        sx={{ mr: 1 }}
+                      >
+                        Back
+                      </Button>
+                    </motion.div>
+                  ) : null}
+                  <Box sx={{ flex: "1 1 auto" }} />
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button onClick={handleNext}>
+                      {activeStep === steps.length - 1 ? "Rent" : "Next"}
+                    </Button>
+                  </motion.div>
+                </Box>
+              </Grid2>
             </Grid2>
-          </Grid2>
-        </Card>
-      </Stack>
+          </Card>
+        </Stack>
+      </motion.div>
     </Modal>
   );
 }
