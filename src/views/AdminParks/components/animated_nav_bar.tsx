@@ -1,27 +1,31 @@
-import { AppBar, Toolbar, Typography,  Button,} from "@mui/material";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { ExitToApp } from "@mui/icons-material";
 import { motion } from "framer-motion";
-import {useScrollVisibility} from "src/hooks";
+import { useScrollVisibility } from "src/hooks";
 
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const AnimatedNavBar = () => {
-    const isVisible = useScrollVisibility();
-    const navigate = useNavigate();
+  const isVisible = useScrollVisibility();
+  const navigate = useNavigate();
 
-    const handleLogout = () => {
-        localStorage.removeItem('userToken'); 
-        sessionStorage.clear();
-        navigate("/login", { replace: true });        
-      };
-      
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("clientPrivateKey");
+    Cookies.remove("sessionKey");
+    Cookies.remove("sessionKey");
+    sessionStorage.clear();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <motion.div
       style={{ position: "fixed", width: "100%", zIndex: 10 }}
       animate={{
-        y: isVisible ? 0: -300,
+        y: isVisible ? 0 : -300,
       }}
-      initial={{ y: 0 }} 
+      initial={{ y: 0 }}
       transition={{
         type: "tween",
         duration: 0.3,
@@ -34,14 +38,14 @@ const AnimatedNavBar = () => {
             Cars Parking Dashboard
           </Typography>
           <Button
-          startIcon={<ExitToApp />}
-          color="inherit"
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
+            startIcon={<ExitToApp />}
+            color="inherit"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
         </Toolbar>
-      </AppBar> 
+      </AppBar>
     </motion.div>
   );
 };

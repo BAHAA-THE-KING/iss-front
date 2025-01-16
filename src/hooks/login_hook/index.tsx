@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api } from "src/utils";
+import { api, apiAuth } from "src/utils";
 import { useHandleError, useToken } from "..";
 
 export const useLoginForm = () => {
@@ -38,7 +38,7 @@ export const useLoginForm = () => {
       return false;
     }
     try {
-      const response = await api.post("/auth/login", {
+      const response = await apiAuth.post("/auth/login", {
         username,
         password,
       });
@@ -92,7 +92,7 @@ export const useLoginForm = () => {
       return false;
     }
     try {
-      const response = await api.post("/auth/register", {
+      const response = await apiAuth.post("/auth/register", {
         username,
         password,
         phone,

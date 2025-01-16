@@ -1,7 +1,9 @@
 import { Box  } from "@mui/material";
 import { AnimatedNavBar , ParksGird } from "./components";
+import { useRequiredAuth } from "src/hooks";
 
 export function AdminParks() {
+  useRequiredAuth();
   return (
     <Box
       width="100%"

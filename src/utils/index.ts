@@ -1,1 +1,1 @@
-export { api, apiNotSecured } from "./apiUtil";
+export { api, apiAuth } from "./apiUtil";
