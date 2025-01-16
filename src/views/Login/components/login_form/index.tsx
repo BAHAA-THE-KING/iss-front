@@ -30,7 +30,7 @@ export default function LoginForm({
 
   const handleSubmit = async () => {
     if (await handleLogin()) {
-      navigate("/show-parks");
+      navigate("/admin-parks");
     }
   };
 
