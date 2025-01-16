@@ -23,16 +23,18 @@ apiNotSecured.interceptors.response.use((res) => {
 
 const apiAuth = new Axios(config);
 
-let clientPrivateKey;
-
 apiAuth.interceptors.request.use(async (req) => {
   const data = req.data;
-  const serverPublicKey = (await apiNotSecured.get("/key/public-key")).data
-    .publicKey;
+  let serverPublicKey = Cookies.get("serverPublicKey");
+  if (!serverPublicKey) {
+    serverPublicKey = (await apiNotSecured.get("/key/public-key")).data
+      .publicKey;
+    Cookies.set("serverPublicKey", serverPublicKey!);
+  }
 
   const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
   const keys = jsEncrypt.getKey();
-  clientPrivateKey = keys.getPrivateKey();
+  Cookies.set("clientPrivateKey", keys.getPrivateKey());
   data.publicKey = keys.getPublicKey();
 
   const newData = JSON.stringify(data);
@@ -60,6 +62,8 @@ apiAuth.interceptors.response.use((res) => {
   const { encryptedData } = data;
 
   const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
+  const clientPrivateKey = Cookies.get("clientPrivateKey");
+
   jsEncrypt.setPrivateKey(clientPrivateKey!);
 
   const decryptedData = [];
@@ -91,12 +95,23 @@ api.interceptors.request.use((req) => {
 
   if (data) {
     const sessionKey = Cookies.get("sessionKey")!;
+    const clientPrivateKey = Cookies.get("clientPrivateKey")!;
     const newData = JSON.stringify(data);
+
+    const hash = CryptoJS.SHA256(newData).toString(CryptoJS.enc.Hex);
+    const signer = new JSEncrypt();
+
+    signer.setPrivateKey(clientPrivateKey);
+    const signature = signer.sign(hash, (str: string) => str, "SHA256");
     const encryptedData = CryptoJS.TripleDES.encrypt(newData, sessionKey, {
       mode: CryptoJS.mode.ECB,
     }).toString();
 
-    req.data = JSON.stringify({ encryptedData });
+    if (signature === false) {
+      throw new Error("Failed to sign data");
+    }
+
+    req.data = JSON.stringify({ encryptedData, signature });
   }
   return req;
 });
@@ -104,7 +119,7 @@ api.interceptors.request.use((req) => {
 api.interceptors.response.use((res) => {
   const data = JSON.parse(res.data);
 
-  const { encryptedData } = data;
+  const { encryptedData, signature } = data;
   if (encryptedData) {
     const sessionKey = Cookies.get("sessionKey")!;
     const decryptedData = CryptoJS.TripleDES.decrypt(
@@ -114,6 +129,19 @@ api.interceptors.response.use((res) => {
         mode: CryptoJS.mode.ECB,
       }
     ).toString(CryptoJS.enc.Utf8);
+
+    const serverPublicKey = Cookies.get("serverPublicKey")!;
+
+    const hash = CryptoJS.SHA256(decryptedData).toString(CryptoJS.enc.Hex);
+
+    const verifier = new JSEncrypt();
+    verifier.setPublicKey(serverPublicKey);
+
+    const isValid = verifier.verify(hash, signature, (str: string) => str);
+
+    if (!isValid) {
+      throw new Error("Invalid Signature");
+    }
 
     res.data = JSON.parse(decryptedData);
 
