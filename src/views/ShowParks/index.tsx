@@ -1,8 +1,10 @@
 import { Box } from "@mui/material";
 
 import { Navbar, Parks } from "./components";
+import { useRequiredAuth } from "src/hooks";
 
 export function ShowParks() {
+  useRequiredAuth();
   return (
     <Box
       width={"100%"}

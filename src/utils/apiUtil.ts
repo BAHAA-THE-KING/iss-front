@@ -11,7 +11,7 @@ const config = {
 };
 
 const setToken = (req: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   req.headers.Authorization = "Bearer " + token;
 };
 
