@@ -1,6 +1,7 @@
 import { Axios, InternalAxiosRequestConfig } from "axios";
 import { JSEncrypt } from "jsencrypt";
 import CryptoJS from "crypto-js";
+import Cookies from "js-cookie";
 
 const config = {
   baseURL: "http://localhost:3000",
@@ -23,8 +24,6 @@ apiNotSecured.interceptors.response.use((res) => {
 const apiAuth = new Axios(config);
 
 let clientPrivateKey;
-const session = { sessionKey: "" };
-const getSessionKey = () => session.sessionKey;
 
 apiAuth.interceptors.request.use(async (req) => {
   const data = req.data;
@@ -74,7 +73,10 @@ apiAuth.interceptors.response.use((res) => {
   }
 
   res.data = JSON.parse(decryptedData.join(""));
-  session.sessionKey = res.data.sessionKey;
+  Cookies.set("sessionKey", res.data.sessionKey, {
+    secure: true,
+    sameSite: "strict",
+  });
 
   delete res.data.sessionKey;
 
@@ -88,7 +90,7 @@ api.interceptors.request.use((req) => {
   const data = req.data;
 
   if (data) {
-    const sessionKey = getSessionKey();
+    const sessionKey = Cookies.get("sessionKey")!;
     const newData = JSON.stringify(data);
     const encryptedData = CryptoJS.TripleDES.encrypt(newData, sessionKey, {
       mode: CryptoJS.mode.ECB,
@@ -104,18 +106,16 @@ api.interceptors.response.use((res) => {
 
   const { encryptedData } = data;
   if (encryptedData) {
-    const sessionKey = getSessionKey();
+    const sessionKey = Cookies.get("sessionKey")!;
     const decryptedData = CryptoJS.TripleDES.decrypt(
       encryptedData,
       sessionKey,
-      { mode: CryptoJS.mode.ECB }
-    ).toString();
-
-    console.log(sessionKey);
-    console.log(decryptedData);
+      {
+        mode: CryptoJS.mode.ECB,
+      }
+    ).toString(CryptoJS.enc.Utf8);
 
     res.data = JSON.parse(decryptedData);
-    console.log(res.data);
 
     return res;
   } else {
