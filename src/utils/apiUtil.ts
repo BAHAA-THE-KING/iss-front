@@ -1,5 +1,6 @@
-import { Axios } from "axios";
+import { Axios, InternalAxiosRequestConfig } from "axios";
 import { JSEncrypt } from "jsencrypt";
+import CryptoJS from "crypto-js";
 
 const config = {
   baseURL: "http://localhost:3000",
@@ -8,37 +9,90 @@ const config = {
   },
 };
 
+const setToken = (req: InternalAxiosRequestConfig) => {
+  const token = localStorage.getItem("token");
+  req.headers.Authorization = "Bearer " + token;
+};
+
+const apiNotSecured = new Axios(config);
+apiNotSecured.interceptors.response.use((res) => {
+  res.data = JSON.parse(res.data);
+  return res;
+});
+
+const apiAuth = new Axios(config);
+
+let clientPrivateKey;
+const session = { sessionKey: "" };
+const getSessionKey = () => session.sessionKey;
+
+apiAuth.interceptors.request.use(async (req) => {
+  const data = req.data;
+  const serverPublicKey = (await apiNotSecured.get("/key/public-key")).data
+    .publicKey;
+
+  const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
+  const keys = jsEncrypt.getKey();
+  clientPrivateKey = keys.getPrivateKey();
+  data.publicKey = keys.getPublicKey();
+
+  const newData = JSON.stringify(data);
+  jsEncrypt.setPublicKey(serverPublicKey!);
+
+  const encryptedData = [];
+  for (let i = 0; i <= Math.floor(newData.length / 100); i++) {
+    const str = newData.slice(i * 100, (i + 1) * 100);
+
+    const encStr = jsEncrypt.encrypt(str);
+    if (encStr === false) {
+      throw new Error("error while encryption data.");
+    }
+    encryptedData.push(encStr);
+  }
+
+  req.data = JSON.stringify({ encryptedData });
+
+  return req;
+});
+
+apiAuth.interceptors.response.use((res) => {
+  const data = JSON.parse(res.data);
+
+  const { encryptedData } = data;
+
+  const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
+  jsEncrypt.setPrivateKey(clientPrivateKey!);
+
+  const decryptedData = [];
+
+  for (const chunk of encryptedData) {
+    const decStr = jsEncrypt.decrypt(chunk);
+    if (decStr === false) {
+      throw new Error("error while encryption data.");
+    }
+    decryptedData.push(decStr);
+  }
+
+  res.data = JSON.parse(decryptedData.join(""));
+  session.sessionKey = res.data.sessionKey;
+
+  delete res.data.sessionKey;
+
+  return res;
+});
+
 const api = new Axios(config);
 
 api.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-  if (token) req.headers.Authorization = "Bearer " + token;
-
+  setToken(req);
   const data = req.data;
-  let clientPrivateKey = localStorage.getItem("clientPrivateKey");
-  const serverPublicKey = localStorage.getItem("serverPublicKey");
-  if (req.url?.startsWith("/auth")) {
-    const jsEncrypt = new JSEncrypt({ default_key_size: "2048" }).getKey();
-    clientPrivateKey = jsEncrypt.getPrivateKey();
-    localStorage.setItem("clientPrivateKey", clientPrivateKey);
-    data.publicKey = jsEncrypt.getPublicKey();
-  }
 
   if (data) {
+    const sessionKey = getSessionKey();
     const newData = JSON.stringify(data);
-    const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
-    jsEncrypt.setPublicKey(serverPublicKey!);
-
-    const encryptedData = [];
-    for (let i = 0; i <= Math.floor(newData.length / 100); i++) {
-      const str = newData.slice(i * 100, (i + 1) * 100);
-
-      const encStr = jsEncrypt.encrypt(str);
-      if (encStr === false) {
-        throw new Error("error while encryption data.");
-      }
-      encryptedData.push(encStr);
-    }
+    const encryptedData = CryptoJS.TripleDES.encrypt(newData, sessionKey, {
+      mode: CryptoJS.mode.ECB,
+    }).toString();
 
     req.data = JSON.stringify({ encryptedData });
   }
@@ -50,22 +104,18 @@ api.interceptors.response.use((res) => {
 
   const { encryptedData } = data;
   if (encryptedData) {
-    const clientPrivateKey = localStorage.getItem("clientPrivateKey");
-    const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
-    jsEncrypt.setPrivateKey(clientPrivateKey!);
+    const sessionKey = getSessionKey();
+    const decryptedData = CryptoJS.TripleDES.decrypt(
+      encryptedData,
+      sessionKey,
+      { mode: CryptoJS.mode.ECB }
+    ).toString();
 
-    const decryptedData = [];
+    console.log(sessionKey);
+    console.log(decryptedData);
 
-    for (const chunk of encryptedData) {
-      const decStr = jsEncrypt.decrypt(chunk);
-      if (decStr === false) {
-        throw new Error("error while encryption data.");
-      }
-      decryptedData.push(decStr);
-    }
-
-    const data = JSON.parse(decryptedData.join(""));
-    res.data = data;
+    res.data = JSON.parse(decryptedData);
+    console.log(res.data);
 
     return res;
   } else {
@@ -73,10 +123,4 @@ api.interceptors.response.use((res) => {
   }
 });
 
-const apiNotSecured = new Axios(config);
-apiNotSecured.interceptors.response.use((res) => {
-  res.data = JSON.parse(res.data);
-  return res;
-});
-
-export { api, apiNotSecured };
+export { apiAuth, api };
