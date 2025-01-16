@@ -12,7 +12,7 @@ function App() {
           {routes.map((e) => (
             <Route key={e.name} path={e.path} element={e.element} />
           ))}
-          <Route path="*" element={<Navigate to={"/admin-parks"} />} />
+          <Route path="*" element={<Navigate to={"/login"} />} />
         </Routes>
       </BrowserRouter>
     </LocalizationProvider>

@@ -29,8 +29,8 @@ export const useLoginForm = () => {
       newErrors.username = "Username must be at least 4 characters long.";
     }
 
-    if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long.";
+    if (password.length < 4) {
+      newErrors.password = "Password must be at least 4 characters long.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -42,7 +42,8 @@ export const useLoginForm = () => {
         username,
         password,
       });
-
+      console.log(response.status);
+      console.log(response.data);
       handleError(response);
 
       const data = response.data;

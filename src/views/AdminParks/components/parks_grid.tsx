@@ -1,111 +1,92 @@
-import { Grid, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button,Typography } from "@mui/material";
+import { Grid, Dialog, DialogTitle,Card, CardContent, Skeleton,DialogContent, DialogActions, TextField, Button,Typography } from "@mui/material";
 import {ListTile} from "../components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "src/utils";
+import axios from "axios";
+
+import {useParkDialog} from "src/hooks"; 
+import {Park} from "src/models/parks"
 const ParksGrid = () => {
 
-    const initialData  = [
-        {
-          id: 1,
-          image: "https://via.placeholder.com/50",
-          name: "Title 1",
-          description: "Subtitle 1",
-          price: "100",
-        },
-        {
-          id: 2,
-          image: "https://via.placeholder.com/50",
-          name: "Title 2",
-          description: "Subtitle 2",
-          price: "200",
-        },
-        {
-          id: 3,
-          image: "https://via.placeholder.com/50",
-          name: "Title 3",
-          description: "Subtitle 3",
-          price: "300",
-        },
-            ];
 
-            const [data, setData] = useState(initialData);
-            const [parkName, setParkName] = useState<string>("");
-            const [parkDescription, setParkDescription] = useState<string>("");
-            const [parkRentPrice, setParkRentPrice] = useState<string>("0");
-            const [isCreate, setIsCreate] = useState<boolean>(true);
-            const [selectedId, setSelectedId] = useState<number | null>(null); // Track selected item
+            const [data, setData] = useState<Park[]>([]);
+            const [loading, setLoading] = useState<boolean>(true);
 
-            const [open, setOpen] = useState(false);
 
-            const handleOpen = () => {
-              setOpen(true);
-            };
-          
-            const handleClose = () => {
-              setOpen(false);
-              restData();
-            };
-
-            const handleDelete = (id: number) => {
-              setData((data) => data.filter((item) => item.id !== id));
-            };
-
-            const handleEdit = (item: any) => {
-              setIsCreate(false);
-              setSelectedId(item.id);
-              setParkName(item.name);
-              setParkDescription(item.description);
-              setParkRentPrice(item.price);
-              handleOpen();
-            };
-
-            const restData = ()=> {
-              setParkName("");
-              setParkDescription("");
-              setParkRentPrice("");
-            }
-
-            const handleConfirm = () => {
-              if (isCreate) {
-                const newItem = {
-                  id: data.length + 1, 
-                  image: "https://via.placeholder.com/50", 
-                  name: parkName,
-                  description: parkDescription,
-                  price: parkRentPrice,
-                };
-                setData((prevData) => [...prevData, newItem]);
-              } else if (selectedId !== null) {
-                const updatedData = data.map((item) =>
-                  item.id === selectedId
-                    ? {
-                        ...item,
-                        name: parkName,
-                        description: parkDescription,
-                        price: parkRentPrice,
-                      }
-                    : item
-                );
-                setData(updatedData);
+            const fetchParks = async () => {
+              try {
+                const response = await axios.get("/park/all");
+                setData(response.data.parks);
+              } catch (error) {
+                console.error("Error fetching parks:", error);
+              } finally {
+                setLoading(false);
               }
-          
-              handleClose(); // Close dialog and reset inputs
             };
+          
+            useEffect(() => {
+              fetchParks();
+            }, []);
+
+            const {
+              parkName,
+              setParkName,
+              parkDescription,
+              setParkDescription,
+              parkRentPrice,
+              setParkRentPrice,
+              isCreate,
+              open,
+              handleClose,
+              handleConfirm,
+              handleEdit,
+              handleDelete,
+            } = useParkDialog([]);
+
+            const ShimmerTile = () => (
+              <Card>
+                <Skeleton variant="rectangular" height={150} />
+                <CardContent>
+                  <Skeleton variant="text" width="60%" />
+                  <Skeleton variant="text" width="80%" />
+                  <Skeleton variant="text" width="40%" />
+                </CardContent>
+              </Card>
+            );
                 
   return (
     <div>
     <Grid container spacing={3} sx={{ padding: 3, paddingTop: "70px"}}>
-    {data.map((item) => (
-      <Grid item xs={20} sm={20} md={20} lg={6} key={item.id}>
-        <ListTile
-          image={item.image}
-          title={item.name}
-          subtitle={item.description}
-          trailing={item.price + " SPY"}
-          onDelete={() => handleDelete(item.id)}
-          onEdit={()=> handleEdit(item)}
-        />
+      <Grid item xs={20} sm={20} md={20} lg={6} >
+         { Array.from(new Array(6)).map((_, index) => ( // Display 6 shimmer tiles
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                <ShimmerTile />
+              </Grid>
+            ))}
+          
       </Grid>
-    ))}
+    {/* {data.map((item) => (
+      <Grid item xs={20} sm={20} md={20} lg={6} key={item.id}>
+         {loading
+          ? Array.from(new Array(6)).map((_, index) => ( // Display 6 shimmer tiles
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                <ShimmerTile />
+              </Grid>
+            ))
+          : data.map((item) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+                <ListTile
+                  image={item.image || "https://via.placeholder.com/150"}
+                  title={item.name}
+                  subtitle={item.description}
+                  trailing={item.price + " SPY"}
+                  onDelete={()=> handleDelete(item.id)}
+                  onEdit={()=>handleEdit(item)}
+                />
+              </Grid>
+            ))}
+      </Grid>
+    ))} */}
   </Grid>
   <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
