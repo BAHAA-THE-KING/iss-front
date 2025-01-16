@@ -12,7 +12,7 @@ export function useCards() {
     api
       .get("/accounts")
       .then((res) => {
-        const data = JSON.parse(res.data);
+        const data = res.data;
         handleError(res);
         setCards(data.accounts);
         setError(undefined);
