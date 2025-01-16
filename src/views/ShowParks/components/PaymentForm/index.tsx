@@ -4,7 +4,6 @@ import { MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { Card } from "src/types/Card";
 import { Park } from "src/types/Park";
 import { RentForm } from "src/types/RentForm";
-import fakeData from "src/fakeData";
 
 type Props = {
   cards: Card[];

@@ -1,5 +1,5 @@
-import { Box , Typography } from "@mui/material";
-import { AnimatedNavBar } from "./components";
+import { Box  } from "@mui/material";
+import { AnimatedNavBar , ParksGird } from "./components";
 
 export function AdminParks() {
   return (
@@ -10,9 +10,9 @@ export function AdminParks() {
       flexDirection="column"
     >
       <AnimatedNavBar />
-      <Typography variant="h6" textAlign="left" mt={1} sx={{ paddingTop: "70px", maxHeight:'64px', height:'20.vh'}}>
-        Scroll to see the Navbar in action!
-      </Typography>
+   
+      <ParksGird
+      />
     </Box>
   );
 }

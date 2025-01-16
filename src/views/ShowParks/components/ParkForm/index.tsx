@@ -23,7 +23,6 @@ type Props = {
 export default function ParkForm({ park, control }: Props) {
   const [isToday, setIsToday] = useState(true);
   const { field: timeField } = useController({ name: "time", control });
-  const { field: durationField } = useController({ name: "duration", control });
   const data = useWatch({ control });
 
   // Combine date and time into a single Dayjs object

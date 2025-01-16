@@ -14,6 +14,7 @@ const AnimatedNavBar = () => {
         sessionStorage.clear();
         navigate("/login", { replace: true });        
       };
+      
   return (
     <motion.div
       style={{ position: "fixed", width: "100%", zIndex: 10 }}
