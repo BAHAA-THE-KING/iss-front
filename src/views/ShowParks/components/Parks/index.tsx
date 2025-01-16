@@ -1,17 +1,34 @@
 import { useState } from "react";
-import { Badge, Box, Button, Stack, Typography } from "@mui/material";
+import { Badge, Box, Stack, TextField, Typography } from "@mui/material";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import { motion } from "framer-motion";
 
-import ReservationsPopup from "../ReservationsPopup";
+import { ReservationsPopup, ActionButton } from "..";
 
 import { Park } from "src/types/Park";
 
 import bg from "src/assets/bg.jpg";
+
 import { useParks } from "../../data";
 
 export default function Parks() {
-  const { parks, error } = useParks();
+  const [search, setSearch] = useState<string | undefined>("");
+  const [date, setDate] = useState<string | undefined>("");
+  const [time, setTime] = useState<string | undefined>("");
+
+  const { parks, error } = useParks({
+    date,
+    search,
+    time: time?.split(" ")?.[1],
+  });
   const [park, setPark] = useState<Park | null>(null);
+
+  const reset = () => {
+    setSearch(undefined);
+    setDate(undefined);
+    setTime(undefined);
+  };
 
   return (
     <Box
@@ -31,6 +48,68 @@ export default function Parks() {
       color={"black"}
       overflow={"auto"}
     >
+      {/* Filters Section with Animation */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        style={{ width: "95%" }}
+      >
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
+          sx={{
+            mb: 3,
+            p: 2,
+            backgroundColor: "white",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <TextField
+            label="Search Parks"
+            variant="outlined"
+            size="small"
+            value={search ?? ""}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ width: "40%" }}
+          />
+          <DatePicker
+            label="Date"
+            value={dayjs(date ?? "")}
+            slotProps={{ textField: { variant: "outlined", size: "small" } }}
+            onChange={(value) => {
+              const date = value?.toDate().toLocaleDateString("sv-Se");
+              if (typeof date === "string") {
+                setDate(date);
+              } else console.log("date is undefined", date, value);
+            }}
+            format="YYYY-MM-DD"
+          />
+          <TimePicker
+            label="Time"
+            slotProps={{
+              textField: {
+                variant: "outlined",
+                size: "small",
+              },
+            }}
+            value={dayjs(time ?? "")}
+            onChange={(value) => {
+              const time = value?.toDate()?.toLocaleString("sv-Se");
+              if (typeof time === "string") setTime(time);
+              else console.log("time is undefined", time, value);
+            }}
+          />
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+            <ActionButton onClick={reset}>Reset</ActionButton>
+          </motion.div>
+        </Stack>
+      </motion.div>
+
+      {/* Parks List */}
       {parks.map((park) => (
         <motion.div
           key={park.id}
@@ -85,23 +164,19 @@ export default function Parks() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button
-                  variant="contained"
-                  sx={{
-                    width: "125px",
-                    borderRadius: 0,
-                    bgcolor: "#003e7e",
-                    me: 1,
-                  }}
+                <ActionButton
+                  sx={{ width: "125px" }}
                   onClick={() => setPark(park)}
                 >
                   Rent
-                </Button>
+                </ActionButton>
               </motion.div>
             </Stack>
           </Box>
         </motion.div>
       ))}
+
+      {/* Error Message */}
       {error ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -122,6 +197,8 @@ export default function Parks() {
           </Box>
         </motion.div>
       ) : null}
+
+      {/* Reservations Popup */}
       {park ? (
         <ReservationsPopup close={() => setPark(null)} park={park} />
       ) : null}
