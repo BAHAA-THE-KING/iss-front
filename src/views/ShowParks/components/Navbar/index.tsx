@@ -9,9 +9,10 @@ export default function Navbar() {
   const navigate = useNavigate();
   const handleLogout = () => {
     Cookies.remove("token");
+    Cookies.remove("role");
     Cookies.remove("clientPrivateKey");
     Cookies.remove("sessionKey");
-    Cookies.remove("sessionKey");
+    Cookies.remove("serverPublicKey");
     navigate("/login", { replace: true });
   };
   return (

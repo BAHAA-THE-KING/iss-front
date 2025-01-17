@@ -4,7 +4,7 @@ import { Navbar, Parks } from "./components";
 import { useRequiredAuth } from "src/hooks";
 
 export function ShowParks() {
-  useRequiredAuth();
+  useRequiredAuth(["visitor", "employee", "admin"]);
   return (
     <Box
       width={"100%"}

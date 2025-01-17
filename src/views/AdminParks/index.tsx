@@ -3,7 +3,7 @@ import { AnimatedNavBar , ParksGird } from "./components";
 import { useRequiredAuth } from "src/hooks";
 
 export function AdminParks() {
-  useRequiredAuth();
+  useRequiredAuth(["employee", "admin"]);
   return (
     <Box
       width="100%"
