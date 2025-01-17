@@ -4,7 +4,7 @@ import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 
 const config = {
-  baseURL: "http://localhost:3000",
+  baseURL: "https://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },
