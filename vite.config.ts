@@ -1,9 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+//import mkcert from "vite-plugin-mkcert";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    //mkcert()
+  ],
   resolve: {
     alias: {
       src: "/src",
@@ -11,6 +15,7 @@ export default defineConfig({
   },
   server: {
     port: 8000,
+    https: true,
     https: {
       key: `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEArnJlIaH84X8aE2LSR72Q4/QVOZ3l1Dtb/lK8w4st2Ik1q3e9
@@ -91,13 +96,5 @@ QzIJ
 -----END CERTIFICATE-----
 `,
     },
-    //proxy: {
-    //  "/api": {
-    //    target: "https://localhost:3000",
-    //    changeOrigin: true,
-    //    secure: false, // Ignore self-signed certificates
-    //    rewrite: (path) => path.replace(/^\/api/, ""), // Adjust as per backend routes
-    //  },
-    //},
   },
 });
