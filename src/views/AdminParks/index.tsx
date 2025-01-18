@@ -1,9 +1,12 @@
 import { Box  } from "@mui/material";
-import { AnimatedNavBar , ParksGird } from "./components";
+import { AnimatedNavBar , ParksGird ,Title} from "./components";
 import { useRequiredAuth } from "src/hooks";
+import {useParkDialog} from "src/hooks";
 
 export function AdminParks() {
   useRequiredAuth();
+  const parkDialogState = useParkDialog();
+
   return (
     <Box
       width="100%"
@@ -12,9 +15,8 @@ export function AdminParks() {
       flexDirection="column"
     >
       <AnimatedNavBar />
-   
-      <ParksGird
-      />
+      <Title parkDialogState={parkDialogState}/>
+      <ParksGird parkDialogState={parkDialogState}/>
     </Box>
   );
 }
