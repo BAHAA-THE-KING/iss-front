@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 export function useToken() {
-  const getToken = () => Cookies.get("token");
   const setToken = (token: string) => Cookies.set("token", token);
-  return { getToken, setToken };
+  const setRole = (role: string) => Cookies.set("role", role);
+  return { setToken, setRole };
 }

@@ -4,7 +4,7 @@ import { useRequiredAuth } from "src/hooks";
 import {useParkDialog} from "src/hooks";
 
 export function AdminParks() {
-  useRequiredAuth();
+  useRequiredAuth(["employee", "admin"]);
   const parkDialogState = useParkDialog();
 
   return (

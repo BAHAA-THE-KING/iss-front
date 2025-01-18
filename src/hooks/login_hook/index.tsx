@@ -19,7 +19,7 @@ export const useLoginForm = () => {
     backendError?: string;
   }>({});
 
-  const { setToken } = useToken();
+  const { setToken, setRole } = useToken();
   const { handleError } = useHandleError();
 
   const handleLogin = async () => {
@@ -49,6 +49,7 @@ export const useLoginForm = () => {
       const data = response.data;
 
       setToken(data.token);
+      setRole(data.user.userType);
       return true;
     } catch (err: any) {
       setErrors({ backendError: err.message });
@@ -104,6 +105,7 @@ export const useLoginForm = () => {
       const data = response.data;
 
       setToken(data.token);
+      setRole(data.user.userType);
 
       return true;
     } catch (err: any) {

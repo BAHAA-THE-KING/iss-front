@@ -12,9 +12,10 @@ const AnimatedNavBar = () => {
 
   const handleLogout = () => {
     Cookies.remove("token");
+    Cookies.remove("role");
     Cookies.remove("clientPrivateKey");
     Cookies.remove("sessionKey");
-    Cookies.remove("sessionKey");
+    Cookies.remove("serverPublicKey");
     sessionStorage.clear();
     navigate("/login", { replace: true });
   };

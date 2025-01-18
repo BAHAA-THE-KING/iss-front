@@ -1,10 +1,9 @@
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router";
-import { useToken } from "src/hooks";
+import Cookies from "js-cookie";
 
 export function useHandleError() {
   const navigate = useNavigate();
-  const { setToken } = useToken();
 
   function handleError(response: AxiosResponse) {
     const data = response.data;
@@ -12,7 +11,11 @@ export function useHandleError() {
       const errMessage =
         data.error ?? data.message ?? data.errors ?? "Internal Server Error";
       if (errMessage === "Invalid or expired token") {
-        setToken("");
+        Cookies.remove("token");
+        Cookies.remove("role");
+        Cookies.remove("clientPrivateKey");
+        Cookies.remove("sessionKey");
+        Cookies.remove("serverPublicKey");
         navigate("/login");
         return;
       }
