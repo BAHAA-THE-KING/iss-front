@@ -17,13 +17,11 @@ export interface ParkDialogState {
   open: boolean;
   loading: boolean;
 
-  // Methods
   fetchParks: () => Promise<void>;
   handleCreate: () => void;
   handleOpen: () => void;
   handleClose: () => void;
   handleConfirm: () => void;
-
-  handleEdit: (item: Park) => void;
-  handleDelete: (id: number) => void;
+  handleEdit: (item: Park) => Promise<void>;
+  handleDelete: (park: Park) => Promise<void>;
 }

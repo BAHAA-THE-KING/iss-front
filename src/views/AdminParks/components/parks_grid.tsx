@@ -40,13 +40,13 @@ const ParksGrid : React.FC<ParkGirdProps> = ({ parkDialogState }) =>{
             }}>
               <h1>No Parks</h1>
               </Box> : data.map((item) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+              <Grid item xs={20} sm={20} md={20} lg={6} key={item.id}>
                 <ListTile
                   image={item.image || "https://via.placeholder.com/150"}
                   title={item.name}
                   subtitle={item.description}
                   trailing={item.price + " SPY"}
-                  onDelete={()=> handleDelete(item.id)}
+                  onDelete={()=> handleDelete(item)}
                   onEdit={()=>handleEdit(item)}
                 />
               </Grid>))}

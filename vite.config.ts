@@ -15,7 +15,6 @@ export default defineConfig({
   },
   server: {
     port: 8000,
-    https: true,
     https: {
       key: `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEArnJlIaH84X8aE2LSR72Q4/QVOZ3l1Dtb/lK8w4st2Ik1q3e9
