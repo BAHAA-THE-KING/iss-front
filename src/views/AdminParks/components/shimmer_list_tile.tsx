@@ -15,7 +15,9 @@ import {
             backgroundColor: "white",
           }}>
             <Skeleton variant="rectangular" height={150} width='30%' />
-            <CardContent>
+            <CardContent sx={{
+              width: "100%",
+            }}>
               <Skeleton variant="text" width="100%" />
               <Skeleton variant="text" width="80%" />
             </CardContent>

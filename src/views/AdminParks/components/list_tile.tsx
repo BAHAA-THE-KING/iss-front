@@ -10,9 +10,10 @@ import {
   import MoreVertIcon from "@mui/icons-material/MoreVert";
   import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import parkImage from "src/assets/park.jpg";
+
 
 interface ListTileProps {
-    image: string; 
     title: string; 
     subtitle: string; 
     trailing: string;
@@ -21,7 +22,7 @@ interface ListTileProps {
 
   }
 
-  const ListTile: React.FC<ListTileProps> = ({ image, title, subtitle, trailing , onDelete ,onEdit }) => {
+  const ListTile: React.FC<ListTileProps> = ({  title, subtitle, trailing , onDelete ,onEdit }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -37,7 +38,7 @@ interface ListTileProps {
       handleMenuClose();
     };
 
- const handleEdit = () => {
+   const handleEdit = () => {
       console.log('hello');
       onEdit();
       handleMenuClose();
@@ -59,17 +60,24 @@ interface ListTileProps {
       }}
     >
       <Box
-        component="img"
-        src={image}
-        alt={title}
         sx={{
-          width: "50px",
-          height: "50px",
+          height: "100%",
+          width:"20%",
           borderRadius: "50%",
           marginRight: "16px",
           objectFit: "cover",
         }}
+      >
+        <img
+        src={parkImage}
+        style={{
+          height: "100%",
+          width:"100%",
+          objectFit: "cover",
+          borderRadius:"15px"
+        }}
       />
+        </Box>
       <Box sx={{ flex: 1 }}>
         <Typography variant="h6" component="div">
           {title}

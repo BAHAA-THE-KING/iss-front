@@ -42,7 +42,6 @@ const ParksGrid : React.FC<ParkGirdProps> = ({ parkDialogState }) =>{
               </Box> : data.map((item) => (
               <Grid item xs={20} sm={20} md={20} lg={6} key={item.id}>
                 <ListTile
-                  image={item.image || "https://via.placeholder.com/150"}
                   title={item.name}
                   subtitle={item.description}
                   trailing={item.price + " SPY"}

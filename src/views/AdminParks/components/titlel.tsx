@@ -12,7 +12,6 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
     const {
       handleCreate,
       data,
-
     } = parkDialogState;
   
     return (
@@ -22,20 +21,26 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
         display: "flex",
         alignItems:"center",
         marginBottom:1,
-         paddingTop: "80px",
-         backgroundColor:"Window",
+         marginTop: "70px",
+         paddingTop: "10px",
+         borderRadius: "15px",
+         backgroundColor:"#fff",
+         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
          paddingBottom: "10px",
          paddingInline:"20px"
       }}
     >
-      <Typography variant="body1" style={{ fontWeight: "bold" }}>All Parks </Typography>
-      <Typography variant="body1"style={{ fontWeight: "bold" }}> ({data.length})</Typography>
+      <Typography variant="body1" style={{ fontWeight: "bold", fontSize:"20px" }}>All Parks </Typography>
+      <Typography variant="body1"style={{ fontWeight: "bold" ,fontSize:"20px" }}> ({data.length})</Typography>
       <Fab
-      color="primary"
       size="small"
       sx={{
         marginLeft:"1%",
-        backgroundColor:"slateblue"
+        color:"white",
+          "&:hover": {
+            color: "#325677",
+          },
+        backgroundColor:"#325677"
       }}
       onClick={()=>{
         console.log('hello');
@@ -45,7 +50,7 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
         <AddIcon 
         sx=
         {{
-          height:"20px"
+          height:"20px",
         }}
         />
       </Fab>
