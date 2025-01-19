@@ -3,6 +3,8 @@ import { JSEncrypt } from "jsencrypt";
 import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 
+import { generateSessionKey } from ".";
+
 const config = {
   baseURL: "https://localhost:3000",
   headers: {
@@ -25,6 +27,11 @@ const apiAuth = new Axios(config);
 
 apiAuth.interceptors.request.use(async (req) => {
   const data = req.data;
+  const sessionKey = generateSessionKey();
+  Cookies.set("sessionKey", sessionKey, {
+    secure: true,
+    sameSite: "strict",
+  });
   let serverPublicKey = Cookies.get("serverPublicKey");
   if (!serverPublicKey) {
     serverPublicKey = (await apiNotSecured.get("/key/public-key")).data
@@ -42,6 +49,7 @@ apiAuth.interceptors.request.use(async (req) => {
     sameSite: "strict",
   });
   data.publicKey = keys.getPublicKey();
+  data.sessionKey = sessionKey;
 
   const newData = JSON.stringify(data);
   jsEncrypt.setPublicKey(serverPublicKey!);
@@ -83,12 +91,6 @@ apiAuth.interceptors.response.use((res) => {
   }
 
   res.data = JSON.parse(decryptedData.join(""));
-  Cookies.set("sessionKey", res.data.sessionKey, {
-    secure: true,
-    sameSite: "strict",
-  });
-
-  delete res.data.sessionKey;
 
   return res;
 });
