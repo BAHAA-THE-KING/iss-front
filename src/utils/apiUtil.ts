@@ -29,12 +29,18 @@ apiAuth.interceptors.request.use(async (req) => {
   if (!serverPublicKey) {
     serverPublicKey = (await apiNotSecured.get("/key/public-key")).data
       .publicKey;
-    Cookies.set("serverPublicKey", serverPublicKey!);
+    Cookies.set("serverPublicKey", serverPublicKey!, {
+      secure: true,
+      sameSite: "strict",
+    });
   }
 
   const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
   const keys = jsEncrypt.getKey();
-  Cookies.set("clientPrivateKey", keys.getPrivateKey());
+  Cookies.set("clientPrivateKey", keys.getPrivateKey(), {
+    secure: true,
+    sameSite: "strict",
+  });
   data.publicKey = keys.getPublicKey();
 
   const newData = JSON.stringify(data);
