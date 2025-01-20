@@ -45,7 +45,7 @@ export default function Parks() {
         bgcolor: "#FEFEFEAA",
         // marginTop:"90px",
         py: 2,
-        minHeight: "CALC(100vh - 125px)",
+        minHeight: "100vh",
       }}
       color={"black"}
       overflow={"auto"}

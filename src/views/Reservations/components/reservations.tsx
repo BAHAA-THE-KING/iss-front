@@ -38,7 +38,7 @@ export default function Parks() {
         backgroundAttachment: "fixed",
         bgcolor: "#FEFEFEAA",
         py: 2,
-        minHeight: "CALC(100vh - 125px)",
+        minHeight: "100vh",
       }}
       color={"black"}
       overflow={"auto"}
