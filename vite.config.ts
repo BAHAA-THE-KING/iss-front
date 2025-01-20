@@ -1,21 +1,22 @@
+// استيراد الدالة defineConfig من Vite والبرنامج الإضافي react-swc
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-//import mkcert from "vite-plugin-mkcert";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
-    //mkcert()
+    react(), // إضافة البرنامج الإضافي لدعم React مع SWC لتحسين الأداء
   ],
   resolve: {
     alias: {
+      // تعريف مسار بديل لتسهيل استيراد الملفات
       src: "/src",
     },
   },
   server: {
-    port: 8000,
+    port: 8000, // تحديد منفذ الخادم المحلي إلى 8000
     https: {
+      // إعدادات HTTPS للخادم المحلي
       key: `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEArnJlIaH84X8aE2LSR72Q4/QVOZ3l1Dtb/lK8w4st2Ik1q3e9
 BzM5SyHk28f6kknhVVQwVqkCfANaUMDPHfsw9Fw+WFmlZBjuCh48DApWcg8fpTH1
