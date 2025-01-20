@@ -26,6 +26,7 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
     selectedFilter,
     filterList,
     setSearch,
+    data,
     setSelectedFilter
   } = parkDialogState;
 
@@ -37,7 +38,7 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
     setAnchorEl(null);
     if (filter) {
     setSelectedFilter(filter);
-    await filterList(filter);
+    await filterList(filter , data);
     }
   };
     

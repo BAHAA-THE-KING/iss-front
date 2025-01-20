@@ -23,8 +23,9 @@ export const useParkDialog = (): ParkDialogState => {
         const response = await api.get("/park/all" ,{
           params: {search},
         });
+        console.log(response.data.parks);
         setData(response.data.parks);
-       await filterList(selectedFilter);
+       await filterList(selectedFilter , response.data.parks);
       } catch (error) {
         console.error("Error fetching parks:", error);
       } finally {
@@ -32,13 +33,13 @@ export const useParkDialog = (): ParkDialogState => {
       }
     };
 
-    const filterList = async (filter:string) => {
+    const filterList = async (filter:string ,  parks: Park[]) => {
       console.log(selectedFilter);
-     const newData = data.filter((park) => {
+     const newData = parks.filter((park) => {
       if(filter === "Free"){
         return park.rentTime.length === 0 || park.rentTime.every((r) => r.length === 0);
       } else if (filter === "Reserved") {
-        return park.rentTime.some((r) => r.length > 0);      
+        return park.rentTime.some((r) => r.length != 0);
       }
       return true;
      });
@@ -96,9 +97,9 @@ export const useParkDialog = (): ParkDialogState => {
       };
       setOpen(false);
       if(await parkRequest(await api.post("/park/add" , newItem))){
-        filterList(selectedFilter);
         setLoading(false);
         setData((prevData) => [...prevData, newItem]);
+        setFilteredData((prevData) => [...prevData, newItem]);
       }
     } else if (selectedId !== null) {
       if(await parkRequest (await api.put(`/park/edit` , {
@@ -117,7 +118,7 @@ export const useParkDialog = (): ParkDialogState => {
              }
            : item
        );
-       filterList(selectedFilter);
+       filterList(selectedFilter , updatedData);
        setLoading(false);
        setData(updatedData);
       }else{
@@ -144,7 +145,7 @@ export const useParkDialog = (): ParkDialogState => {
   const handleDelete = async (park: Park) => {
     if(await parkRequest(await api.delete(`/park/delete/${park.id}`))){
       setData((prevData) => prevData.filter((item) => item.id !== park.id));
-      filterList(selectedFilter);
+      setFilteredData((prevData) => prevData.filter((item) => item.id !== park.id));
       setLoading(false);
     }else{
       setLoading(false);
@@ -152,6 +153,7 @@ export const useParkDialog = (): ParkDialogState => {
   };
 
   return {
+    data,
     selectedFilter, 
     setSelectedFilter,
     filteredData,

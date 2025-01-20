@@ -1,28 +1,24 @@
 import { useState } from "react";
-import { Badge, Box, Stack, TextField, Typography } from "@mui/material";
+import { Box, Stack, TextField, Typography ,Grid } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import  ActionButton  from "../../ShowParks/components/ActionButton";
+import ShimmerListTile from "../../AdminParks/components/shimmer_list_tile";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-
-import { ReservationsPopup, ActionButton } from "..";
-
-import { Park } from "src/types/Park";
-
-import bg from "src/assets/bg.jpg";
-
-import { useParks } from "../../data";
+import { useReservations } from "../data/use_reservations";
+import parkImage from "src/assets/park.jpg";
+import TimeDetails from "./time";
 
 export default function Parks() {
   const [search, setSearch] = useState<string | undefined>("");
   const [date, setDate] = useState<string | undefined>("");
   const [time, setTime] = useState<string | undefined>("");
 
-  const { parks, error } = useParks({
+  const { reserves, error , loading } = useReservations({
     date,
     search,
     time: time?.split(" ")?.[1],
   });
-  const [park, setPark] = useState<Park | null>(null);
 
   const reset = () => {
     setSearch(undefined);
@@ -37,20 +33,16 @@ export default function Parks() {
       justifyContent={"flex-start"}
       alignItems={"center"}
       sx={{
-        backgroundImage: `URL(${bg})`,
-        backgroundSize: "100% 100%",
         height:"100%",
         backgroundBlendMode: "color",
         backgroundAttachment: "fixed",
         bgcolor: "#FEFEFEAA",
-        // marginTop:"90px",
         py: 2,
         minHeight: "CALC(100vh - 125px)",
       }}
       color={"black"}
       overflow={"auto"}
     >
-      {/* Filters Section with Animation */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -110,74 +102,83 @@ export default function Parks() {
           </motion.div>
         </Stack>
       </motion.div>
-
-      {/* Parks List */}
-      {parks.map((park) => (
-        <motion.div
-          key={park.id}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          whileHover={{ scale: 1.02 }}
-          style={{
-            width: "95%",
-            height: "125px",
-            margin: "10px 0",
-          }}
-        >
-          <Box
-            width={"100%"}
-            height={"100%"}
-            bgcolor={"white"}
-            borderRadius={"10px"}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"stretch"}
-            my={1}
-            p={1}
-          >
-            <Stack flexDirection={"row"}>
-              <Box width={"250px"} height={"125px"} marginInlineEnd={"10px"}>
-                <motion.img
-                  src={park.image}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </Box>
-              <Box>
-                <Badge
-                  variant="dot"
-                  badgeContent={park.status + " Now"}
-                  color={park.status === "free" ? "success" : "error"}
-                >
-                  <Typography variant="h5">{park.name}</Typography>
-                </Badge>
-                <Box>{park.description}</Box>
-              </Box>
-            </Stack>
-            <Stack
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              my={2}
-              mx={3}
-            >
-              <Box>${park.price}/hr</Box>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <ActionButton
-                  sx={{ width: "125px" }}
-                  onClick={() => setPark(park)}
-                >
-                  Rent
-                </ActionButton>
-              </motion.div>
-            </Stack>
-          </Box>
-        </motion.div>
-      ))}
+      <div>
+    <Grid container spacing={3} sx={{ padding: 3, }}>
+    {loading? Array.from(new Array(6)).map((_, index) => ( 
+              <Grid item xs={20} sm={20} md={20} lg={6} key={index}>
+                <ShimmerListTile />
+              </Grid>
+            )) : reserves.length == 0 ? <Box sx={{
+              height: '100%', 
+              width: '100%',  
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',    
+              backgroundColor: 'lightgray', 
+            }}>
+              <h1>No Parks</h1>
+              </Box> : reserves.map((item) => (
+              <Grid item xs={20} sm={20} md={20} lg={6} key={item.id}>
+                    <motion.div
+         initial={{ opacity: 0, y: -10 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.7 }}
+         style={{ width: "95%" }}
+         whileHover={{
+           scale: 1.02,
+           transition: { duration: 0.3 },
+         }}
+         >
+       <Box
+         sx={{
+           display: "flex",
+           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+           height:'70%',
+           alignItems: "center",
+           padding: "16px",
+           border: "3px solid wheat",
+           borderRadius: "8px",
+           backgroundColor: "white",
+         }}
+       >
+         <Box
+           sx={{
+             height: "100%",
+             width:"20%",
+             borderRadius: "50%",
+             marginRight: "16px",
+             objectFit: "cover",
+           }}
+         >
+           <img
+           src={parkImage}
+           style={{
+             height: "100%",
+             width:"100%",
+             objectFit: "cover",
+             borderRadius:"15px"
+           }}
+         />
+           </Box>
+         <Box sx={{ flex: 1 }}>
+           <Typography variant="h6" component="div">
+             {item.Parking.name}
+           </Typography>
+           <Typography variant="body2" color="text.secondary">
+           {item.Parking.description}
+           </Typography>
+           <TimeDetails startTime={item.startTime} duration={item.duration}/>
+         </Box>
+         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+           <Typography variant="body2">{item.cost} SPY
+           </Typography>
+         </Box>
+       </Box>
+       </motion.div>
+              </Grid>))}
+  </Grid>
+  </div>
+     
 
       {/* Error Message */}
       {error ? (
@@ -199,11 +200,6 @@ export default function Parks() {
             </Typography>
           </Box>
         </motion.div>
-      ) : null}
-
-      {/* Reservations Popup */}
-      {park ? (
-        <ReservationsPopup close={() => setPark(null)} park={park} />
       ) : null}
     </Box>
   );

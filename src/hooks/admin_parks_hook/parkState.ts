@@ -2,6 +2,8 @@ import { Park } from "src/models/parks";
 
 export interface ParkDialogState {
   filteredData: Park[];
+  data: Park[];
+
   parkName: string;
   setParkName: React.Dispatch<React.SetStateAction<string>>;
 
@@ -21,7 +23,7 @@ export interface ParkDialogState {
 
   fetchParks: () => Promise<void>;
   handleCreate: () => void;
-  filterList: (filter:string) => Promise<void>;
+  filterList: (filter:string , parks: Park[]) => Promise<void>;
   handleOpen: () => void;
   handleClose: () => void;
   setSelectedFilter: (filter:string) => void;
