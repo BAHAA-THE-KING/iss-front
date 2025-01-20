@@ -120,6 +120,7 @@ export default function Parks() {
           style={{
             width: "95%",
             height: "125px",
+            margin: "10px 0",
           }}
         >
           <Box

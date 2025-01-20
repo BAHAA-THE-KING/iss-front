@@ -42,8 +42,6 @@ export const useLoginForm = () => {
         username,
         password,
       });
-      console.log(response.status);
-      console.log(response.data);
       handleError(response);
 
       const data = response.data;
