@@ -17,7 +17,7 @@ const ParksGrid : React.FC<ParkGirdProps> = ({ parkDialogState }) =>{
 
   const {
     loading,
-    data,
+    filteredData,
     fetchParks,
     handleEdit,
     handleDelete,
@@ -30,7 +30,7 @@ const ParksGrid : React.FC<ParkGirdProps> = ({ parkDialogState }) =>{
               <Grid item xs={20} sm={20} md={20} lg={6} key={index}>
                 <ShimmerListTile />
               </Grid>
-            )) : data.length == 0 ? <Box sx={{
+            )) : filteredData.length == 0 ? <Box sx={{
               height: '100%', 
               width: '100%',  
               display: 'flex',
@@ -39,7 +39,7 @@ const ParksGrid : React.FC<ParkGirdProps> = ({ parkDialogState }) =>{
               backgroundColor: 'lightgray', 
             }}>
               <h1>No Parks</h1>
-              </Box> : data.map((item) => (
+              </Box> : filteredData.map((item) => (
               <Grid item xs={20} sm={20} md={20} lg={6} key={item.id}>
                 <ListTile
                   title={item.name}

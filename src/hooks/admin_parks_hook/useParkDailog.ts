@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { ParkDialogState} from "./parkState"
 import {Park} from "src/models/parks";
 import {api} from "src/utils/apiUtil"
@@ -13,18 +13,45 @@ export const useParkDialog = (): ParkDialogState => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<Park[]>([]);
+  const [filteredData, setFilteredData] = useState<Park[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-    
+  const [search, setSearch] = useState<string>("");
+  const [selectedFilter, setSelectedFilter] = useState<string>("All");
+
     const fetchParks = async () => {
       try {
-        const response = await api.get("/park/all");
+        const response = await api.get("/park/all" ,{
+          params: {search},
+        });
         setData(response.data.parks);
+       await filterList(selectedFilter);
       } catch (error) {
         console.error("Error fetching parks:", error);
       } finally {
         setLoading(false);
       }
     };
+
+    const filterList = async (filter:string) => {
+      console.log(selectedFilter);
+     const newData = data.filter((park) => {
+      if(filter === "Free"){
+        return park.rentTime.length === 0 || park.rentTime.every((r) => r.length === 0);
+      } else if (filter === "Reserved") {
+        return park.rentTime.some((r) => r.length > 0);      
+      }
+      return true;
+     });
+     setFilteredData(newData);
+    };
+
+    useEffect(() => {
+      const debounceFetch = setTimeout(() => {
+        fetchParks();
+      }, 500); 
+  
+      return () => clearTimeout(debounceFetch); 
+    }, [search]); 
 
    const  parkRequest = async (response: AxiosResponse) => {
       setLoading(true);
@@ -69,6 +96,7 @@ export const useParkDialog = (): ParkDialogState => {
       };
       setOpen(false);
       if(await parkRequest(await api.post("/park/add" , newItem))){
+        filterList(selectedFilter);
         setLoading(false);
         setData((prevData) => [...prevData, newItem]);
       }
@@ -89,6 +117,7 @@ export const useParkDialog = (): ParkDialogState => {
              }
            : item
        );
+       filterList(selectedFilter);
        setLoading(false);
        setData(updatedData);
       }else{
@@ -115,6 +144,7 @@ export const useParkDialog = (): ParkDialogState => {
   const handleDelete = async (park: Park) => {
     if(await parkRequest(await api.delete(`/park/delete/${park.id}`))){
       setData((prevData) => prevData.filter((item) => item.id !== park.id));
+      filterList(selectedFilter);
       setLoading(false);
     }else{
       setLoading(false);
@@ -122,9 +152,13 @@ export const useParkDialog = (): ParkDialogState => {
   };
 
   return {
-    data,
-    setData,
+    selectedFilter, 
+    setSelectedFilter,
+    filteredData,
+    filterList,
     parkName,
+    search,
+    setSearch,
     setParkName,
     parkDescription,
     setParkDescription,

@@ -1,6 +1,13 @@
 import { ParkDialogState } from "src/hooks/admin_parks_hook/parkState";
-import {Fab,Box,Typography } from "@mui/material";
+import {Fab,Box,Typography ,TextField , IconButton , Menu,useMediaQuery  } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add'
+import FilterListIcon from "@mui/icons-material/FilterList";
+
+import { useState } from "react";
+import FilterMenuItem from "./filter_menu_item";
+import FilterButtonItem from "./filter_button_item";
+
+
 
 interface TitleProps {
   parkDialogState: ParkDialogState;
@@ -9,11 +16,31 @@ interface TitleProps {
 
 const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
 
-    const {
-      handleCreate,
-      data,
-    } = parkDialogState;
-  
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const isMobileView = useMediaQuery("(max-width:790px)");
+  const {
+    handleCreate,
+    filteredData,
+    search,
+    selectedFilter,
+    filterList,
+    setSearch,
+    setSelectedFilter
+  } = parkDialogState;
+
+  const handleClick = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose =async (filter : string) => {
+    setAnchorEl(null);
+    if (filter) {
+    setSelectedFilter(filter);
+    await filterList(filter);
+    }
+  };
+    
     return (
       <>
     <Box
@@ -30,8 +57,28 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
          paddingInline:"20px"
       }}
     >
-      <Typography variant="body1" style={{ fontWeight: "bold", fontSize:"20px" }}>All Parks </Typography>
-      <Typography variant="body1"style={{ fontWeight: "bold" ,fontSize:"20px" }}> ({data.length})</Typography>
+      <Typography variant="body1" style={{ fontWeight: "bold" }} sx={{
+ fontSize: "15px", 
+ "@media (min-width:600px)": {
+   fontSize: "15px", 
+ },
+ "@media (min-width:960px)": {
+   fontSize: "20px", 
+ },
+
+      }}>All Parks </Typography>
+      <Typography variant="body1"
+      style={{ 
+        fontWeight: "bold" ,
+       }}
+        sx={{
+ fontSize: "15px", 
+ "@media (min-width:600px)": {
+   fontSize: "15px", 
+ },
+ "@media (min-width:960px)": {
+   fontSize: "20px", 
+ },}}> ({filteredData.length})</Typography>
       <Fab
       size="small"
       sx={{
@@ -54,6 +101,57 @@ const Title: React.FC<TitleProps> = ({ parkDialogState }) =>  {
         }}
         />
       </Fab>
+      <TextField
+         label="Search"
+         variant="outlined"
+         size="small"
+         value={ search}
+         onChange={async(e) => {console.log(e);
+          setSearch(e.target.value);
+         }}
+         sx={{ minWidth: "170px" ,width:"30%", marginLeft:"3%" }}
+                />
+                  {!isMobileView && (
+    <Box
+    sx={{
+      display: "flex",
+    }}
+    >
+        {["All", "Free", "Reserved"].map((filter) => (
+        <FilterButtonItem
+          label={filter}
+          selectedFilter={selectedFilter}
+          onSelect={()=> handleClose(filter)}
+        />
+      ))}
+    </Box>
+  
+  )}
+     {isMobileView && (
+    <Box>
+      <IconButton
+        onClick={handleClick}
+      >
+        <FilterListIcon />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => handleClose(selectedFilter)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+      >
+        {["All", "Free", "Reserved"].map((filter) => (
+        <FilterMenuItem
+          label={filter}
+          selectedFilter={selectedFilter}
+          onSelect={()=> handleClose(filter)}
+        />
+      ))}
+      </Menu>
+    </Box>
+  
+  )}
     </Box>
     </>
   );

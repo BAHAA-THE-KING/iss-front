@@ -7,6 +7,8 @@ import {
     MenuItem,
     ListItemIcon,
   } from "@mui/material";
+  import { motion } from "framer-motion";
+
   import MoreVertIcon from "@mui/icons-material/MoreVert";
   import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -46,10 +48,19 @@ interface ListTileProps {
   
   
     return (
+      <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7 }}
+      style={{ width: "95%" }}
+      whileHover={{
+        scale: 1.02,
+        transition: { duration: 0.3 },
+      }}
+      >
     <Box
       sx={{
         display: "flex",
-        // width:'50%',
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
         height:'70%',
         alignItems: "center",
@@ -107,6 +118,7 @@ interface ListTileProps {
         </Menu>
       </Box>
     </Box>
+    </motion.div>
   );
 };
 

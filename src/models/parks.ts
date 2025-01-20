@@ -7,7 +7,10 @@ export interface Park {
     image: string | null;
     createdAt: string;
     updatedAt: string;
-    rentTime: string[];
+    rentTime: {
+      startDateTime: string;
+      duration: number;
+    }[][];
     status: string;
   }
   
