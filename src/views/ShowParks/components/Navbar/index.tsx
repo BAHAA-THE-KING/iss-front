@@ -83,7 +83,7 @@ export default function Navbar() {
             <Typography sx={ getLinkStyle("/reservations")
             }>Reservations</Typography>
           </Link>
-          {role === "employee" || role === "admin" && (
+          {(role === "employee" || role === "admin") && (
             <Link
               to="/admin-parks"
               style={getLinkStyle("/admin-parks")}
